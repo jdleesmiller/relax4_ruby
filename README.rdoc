@@ -1,0 +1,137 @@
+= relax4_ruby
+
+== DESCRIPTION
+
+Ruby interface for the RELAX IV code for the minimum cost network flow problem.
+In the words of the code's authors:
+
+  PURPOSE - THIS ROUTINE IMPLEMENTS THE RELAXATION METHOD
+            OF BERTSEKAS AND TSENG (SEE [1], [2]) FOR LINEAR 
+            COST ORDINARY NETWORK FLOW PROBLEMS.
+
+  [1] BERTSEKAS, D. P., "A UNIFIED FRAMEWORK FOR PRIMAL-DUAL METHODS ..."
+      MATHEMATICAL PROGRAMMING, VOL. 32, 1985, PP. 125-145.
+  [2] BERTSEKAS, D. P., AND TSENG, P., "RELAXATION METHODS FOR 
+      MINIMUM COST ..." OPERATIONS RESEARCH, VOL. 26, 1988, PP. 93-114.
+
+     THE RELAXATION METHOD IS ALSO DESCRIBED IN THE BOOKS:
+
+  [3] BERTSEKAS, D. P., "LINEAR NETWORK OPTIMIZATION: ALGORITHMS AND CODES"
+      MIT PRESS, 1991.
+  [4] BERTSEKAS, D. P. AND TSITSIKLIS, J. N., "PARALLEL AND DISTRIBUTED 
+      COMPUTATION: NUMERICAL METHODS", PRENTICE-HALL, 1989.
+
+  THIS CODE WAS WRITTEN BY DIMITRI P. BERTSEKAS AND PAUL TSENG,
+  WITH A CONTRIBUTION BY JONATHAN ECKSTEIN IN THE PHASE II INITIALIZATION.
+  THE ROUTINE AUCTION WAS WRITTEN BY DIMITRI P. BERTSEKAS AND IS BASED ON
+  THE METHOD DESCRIBED IN THE PAPER:
+
+  [5] BERTSEKAS, D. P., "AN AUCTION/SEQUENTIAL SHORTEST PATH ALGORITHM 
+      FOR THE MINIMUM COST FLOW PROBLEM", LIDS REPORT P-2146, MIT, NOV. 1992.
+
+The original source can be downloaded from:
+* http://elib.zib.de/pub/Packages/mathprog/mincost/relax-4/
+
+See also:
+* http://www-neos.mcs.anl.gov/neos/solvers/lno:RELAX4/RELAX4.html
+* http://web.mit.edu/afs/athena.mit.edu/user/d/i/dimitrib/www/RELAX4.txt
+
+== SYNOPSIS
+
+Currently low-level interface only.
+
+  require 'rubygems'
+  require 'relax4'
+
+  start_node = Relax4_ruby::IntegerArray.new(2)
+  start_node[0] = 1
+  start_node[1] = 2
+
+  end_node = Relax4_ruby::IntegerArray.new(2)
+  end_node[0] = 3
+  end_node[1] = 3
+
+  cost = Relax4_ruby::IntegerArray.new(2)
+  cost[0] = 10
+  cost[1] = 20
+
+  capacity = Relax4_ruby::IntegerArray.new(2)
+  capacity[0] = 99
+  capacity[1] = 99
+
+  demand = Relax4_ruby::IntegerArray.new(3)
+  demand[0] = -5
+  demand[1] = -3
+  demand[2] = 8
+
+  flows = Relax4_ruby::IntegerArray.new(2)
+
+  Relax4_ruby.run_relax4(3, 2, start_node, end_node, cost, capacity,
+                         demand, flows, 0)
+
+  assert flows[0] == 5
+  assert flows[1] == 3
+
+== REQUIREMENTS
+
+* Currently tested only on Linux (Ubuntu 10.04)
+* You must have the +f2c+ and +libf2c2+ (FORTRAN to C converter) packages.
+
+== INSTALL
+
+* gem build relax4.gemspec
+* gem install relax4-<version>.gem
+
+I will push this out properly when it's a bit more complete.
+
+== TODO
+
+* Put everything into the Relax4 module
+* Better interface
+* Better behavior (e.g. currently halts on infeasible input) 
+* Remove dependence on f2c if possible
+
+== LICENSE
+
+The authors of RELAX IV (D.P. Bertsekas and P. Tseng) released the code with the
+following user guidelines:
+
+  THIS ROUTINE IS IN THE PUBLIC DOMAIN TO BE USED ONLY FOR RESEARCH
+  PURPOSES.  IT CANNOT BE USED AS PART OF A COMMERCIAL PRODUCT, OR
+  TO SATISFY IN ANY PART COMMERCIAL DELIVERY REQUIREMENTS TO
+  GOVERNMENT OR INDUSTRY, WITHOUT PRIOR AGREEMENT WITH THE AUTHORS.
+  USERS ARE REQUESTED TO ACKNOWLEDGE THE AUTHORSHIP OF THE CODE,
+  AND THE RELAXATION METHOD.  THEY SHOULD ALSO REGISTER WITH THE
+  AUTHORS TO RECEIVE UPDATES AND SUBSEQUENT RELEASES.
+
+The author of the RELAX IV code is:
+
+  DIMITRI P. BERTSEKAS
+  LABORATORY FOR INFORMATION AND DECISION SYSTEMS
+  MASSACHUSETTS INSTITUTE OF TECHNOLOGY
+  CAMBRIDGE, MA 02139
+  (617) 253-7267, DIMITRIB@MIT.EDU
+
+The code for these Ruby bindings is released under the MIT license.
+
+Copyright (c) 2010 John Lees-Miller
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
