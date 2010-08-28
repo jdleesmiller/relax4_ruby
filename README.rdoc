@@ -74,13 +74,21 @@ Currently low-level interface only.
 
 == REQUIREMENTS
 
-* Currently tested only on Linux (Ubuntu 10.04)
-* You must have the +f2c+ and +libf2c2+ (FORTRAN to C converter) packages.
+* Currently tested only on 32-bit Linux (Ubuntu 10.04) and Ruby 1.8.7.
+* You must have the +f2c+ (FORTRAN to C converter) packages.
+
+The following packages were required to install on Ubuntu 10.04:
+
+* ruby, ruby-dev, rubygems, rake
+* f2c (and its dependencies)
+
+The bindings were generated with swig (www.swig.org), but you don't need to
+install SWIG to build the gem.
 
 == INSTALL
 
-* gem build relax4.gemspec
-* gem install relax4-<version>.gem
+  gem build relax4.gemspec
+  gem install relax4-<version>.gem
 
 I will push this out properly when it's a bit more complete.
 
