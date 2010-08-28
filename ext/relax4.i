@@ -1,4 +1,4 @@
-%module relax4_ruby
+%module relax4
 
 %{
 #include "f2c.h"
