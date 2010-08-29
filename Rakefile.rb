@@ -55,6 +55,20 @@ task :rdoc_sh do |t|
     "README.rdoc #{Dir.glob('lib/**/*.rb').join(' ')}"
 end
 
+begin
+  require 'rcov/rcovtask'
+  Rcov::RcovTask.new do |test|
+    test.libs << 'ext'
+    test.libs << 'test'
+    test.pattern = 'test/**/test_*.rb'
+    test.verbose = true
+  end
+rescue LoadError
+  task :rcov do
+    abort "RCov is not available; you must: sudo gem install spicycode-rcov"
+  end
+end
+
 require 'rake/clean'
 CLEAN.include('ext/*.o', 'ext/mkmf.log', 'ext/Makefile')
 CLOBBER.include('ext/*.so')
