@@ -38,52 +38,37 @@ See also:
 
 == SYNOPSIS
 
-Currently low-level interface only.
-
   require 'rubygems'
   require 'relax4'
-
-  start_node = Relax4_ruby::IntegerArray.new(2)
-  start_node[0] = 1
-  start_node[1] = 2
-
-  end_node = Relax4_ruby::IntegerArray.new(2)
-  end_node[0] = 3
-  end_node[1] = 3
-
-  cost = Relax4_ruby::IntegerArray.new(2)
-  cost[0] = 10
-  cost[1] = 20
-
-  capacity = Relax4_ruby::IntegerArray.new(2)
-  capacity[0] = 99
-  capacity[1] = 99
-
-  demand = Relax4_ruby::IntegerArray.new(3)
-  demand[0] = -5
-  demand[1] = -3
-  demand[2] = 8
-
-  flows = Relax4_ruby::IntegerArray.new(2)
-
-  Relax4_ruby.run_relax4(3, 2, start_node, end_node, cost, capacity,
-                         demand, flows, 0)
-
-  assert flows[0] == 5
-  assert flows[1] == 3
+  
+  # From Figure 29.3 of Cormen, Leiserson, Rivest and Stein (2001).
+  # Introduction to Algorithms, 2nd Edition.
+  #
+  #      (2)          move four units of flow from (1) to (4)
+  #     / | \         each edge has a cost and a capacity
+  #    /  |  \        edges are directed
+  #  (1)  |  (4)
+  #    \  |  /
+  #     \ | /
+  #      (3)
+  #
+  Relax4.solve(
+      :demands     => [-4, 0, 0, 4],
+      :start_nodes => [ 1, 1, 2, 2, 3],
+      :end_nodes   => [ 2, 3, 3, 4, 4],
+      :costs       => [ 2, 5, 3, 7, 1],
+      :capacities  => [ 5, 2, 1, 2, 4]) #=> [2, 2, 1, 1, 3]
 
 == REQUIREMENTS
 
 * Currently tested only on 32-bit Linux (Ubuntu 10.04) and Ruby 1.8.7.
-* You must have the +f2c+ (FORTRAN to C converter) packages.
 
 The following packages were required to install on Ubuntu 10.04:
 
 * ruby, ruby-dev, rubygems, rake
-* f2c (and its dependencies)
 
-The bindings were generated with swig (www.swig.org), but you don't need to
-install SWIG to build the gem.
+The bindings were generated with f2c (FORTRAN to C converter) and swig
+(www.swig.org), but you don't need to install f2c or SWIG to build the gem.
 
 == INSTALL
 
@@ -91,13 +76,6 @@ install SWIG to build the gem.
   gem install relax4-<version>.gem
 
 I will push this out properly when it's a bit more complete.
-
-== TODO
-
-* Put everything into the Relax4 module
-* Better interface
-* Better behavior (e.g. currently halts on infeasible input) 
-* Remove dependence on f2c if possible
 
 == LICENSE
 
