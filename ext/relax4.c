@@ -10,9 +10,9 @@
 http://www.netlib.org/f2c/libf2c.zip
 */
 
-#include "assert.h"
 #include "stdlib.h"
-#include "stdio.h" /* TODO delete */
+/*#include "stdio.h" */ /* just for tracing*/
+#include "assert.h"
 #include "relax4_f2c.h"
 #include "relax4.h"
 
@@ -419,7 +419,7 @@ L11:
       goto L10;
     }
     if (capout < 0) {
-      printf("PHASE 1: EXOGENOUS IN FLOW > OUT CAP AT %ld\n", node);
+      /*printf("PHASE 1: EXOGENOUS IN FLOW > OUT CAP AT %ld\n", node);*/
       return RELAX4_INFEASIBLE;
     }
 
@@ -447,7 +447,7 @@ L12:
       goto L10;
     }
     if (capin < 0) {
-      printf("PHASE 1: EXOGENOUS OUT FLOW > IN CAP AT %ld\n", node);
+      /*printf("PHASE 1: EXOGENOUS OUT FLOW > IN CAP AT %ld\n", node);*/
       return RELAX4_INFEASIBLE;
     }
 
@@ -3848,6 +3848,7 @@ int relax4_run()
   relax4_();
 
   /*     DISPLAY RELAX4 STATISTICS */
+  /*
   if (cr_1.crash == 1) {
     printf("NUMBER OF AUCTION/SHORTEST PATH ITERATIONS = %ld\n", output_1.nsp);
   }
@@ -3855,6 +3856,7 @@ int relax4_run()
   printf("NUMBER OF MULTINODE ITERATIONS = %ld\n", output_1.nmultinode);
   printf("NUMBER OF MULTINODE ASCENT STEPS = %ld\n", output_1.num_ascnt__);
   printf("NUMBER OF REGULAR AUGMENTATIONS = %ld\n", output_1.num_augm__);
+  */
 
   return 0;
 }
