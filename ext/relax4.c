@@ -10,8 +10,11 @@
 http://www.netlib.org/f2c/libf2c.zip
 */
 
-#include "f2c.h"
-#include "stdio.h"
+#include "assert.h"
+#include "stdlib.h"
+#include "stdio.h" /* TODO delete */
+#include "relax4_f2c.h"
+#include "relax4.h"
 
 /* Common Block Declarations */
 
@@ -64,7 +67,7 @@ struct {
 #define arrayx_1 arrayx_
 
 struct {
-  integer rc[70000];
+  integer *rc;
 } arrayrc_;
 
 #define arrayrc_1 arrayrc_
@@ -77,16 +80,16 @@ struct {
 
 union {
   struct {
-    integer i1[10000];
+    integer *i1;
   } _1;
   struct {
-    integer tempin[10000];
+    integer *tempin;
   } _2;
   struct {
-    integer label[10000];
+    integer *label;
   } _3;
   struct {
-    integer p[10000];
+    integer *p;
   } _4;
 } blk1_;
 
@@ -97,16 +100,16 @@ union {
 
 union {
   struct {
-    integer i2[10000];
+    integer *i2;
   } _1;
   struct {
-    integer tempou[10000];
+    integer *tempou;
   } _2;
   struct {
-    integer prdcsr[10000];
+    integer *prdcsr;
   } _3;
   struct {
-    integer price[10000];
+    integer *price;
   } _4;
 } blk2_;
 
@@ -117,10 +120,10 @@ union {
 
 union {
   struct {
-    integer i3[10000];
+    integer *i3;
   } _1;
   struct {
-    integer fou[10000];
+    integer *fou;
   } _2;
 } blk3_;
 
@@ -129,10 +132,10 @@ union {
 
 union {
   struct {
-    integer i4[70000];
+    integer *i4;
   } _1;
   struct {
-    integer nxtou[70000];
+    integer *nxtou;
   } _2;
 } blk4_;
 
@@ -141,10 +144,10 @@ union {
 
 union {
   struct {
-    integer i5[10000];
+    integer *i5;
   } _1;
   struct {
-    integer fin[10000];
+    integer *fin;
   } _2;
 } blk5_;
 
@@ -153,10 +156,10 @@ union {
 
 union {
   struct {
-    integer i6[70000];
+    integer *i6;
   } _1;
   struct {
-    integer nxtin[70000];
+    integer *nxtin;
   } _2;
 } blk6_;
 
@@ -165,10 +168,10 @@ union {
 
 union {
   struct {
-    integer i7[70000];
+    integer *i7;
   } _1;
   struct {
-    integer save[70000];
+    integer *save;
   } _2;
 } blk7_;
 
@@ -176,17 +179,17 @@ union {
 #define blk7_2 (blk7_._2)
 
 struct {
-  logical1 scan[10000];
+  logical1 *scan;
 } blk8_;
 
 #define blk8_1 blk8_
 
 union {
   struct {
-    logical1 mark[10000];
+    logical1 *mark;
   } _1;
   struct {
-    logical1 path_id__[10000];
+    logical1 *path_id__;
   } _2;
 } blk9_;
 
@@ -195,10 +198,10 @@ union {
 
 union {
   struct {
-    integer tfstou[10000];
+    integer *tfstou; /* AKA ddpos */
   } _1;
   struct {
-    integer fpushf[10000];
+    integer *fpushf;
   } _2;
 } blk10_;
 
@@ -207,10 +210,10 @@ union {
 
 union {
   struct {
-    integer tnxtou[70000];
+    integer *tnxtou;
   } _1;
   struct {
-    integer nxtpushf[70000];
+    integer *nxtpushf;
   } _2;
 } blk11_;
 
@@ -219,10 +222,10 @@ union {
 
 union {
   struct {
-    integer tfstin[10000];
+    integer *tfstin; /* AKA ddneg */
   } _1;
   struct {
-    integer fpushb[10000];
+    integer *fpushb;
   } _2;
 } blk12_;
 
@@ -231,10 +234,10 @@ union {
 
 union {
   struct {
-    integer tnxtin[70000];
+    integer *tnxtin;
   } _1;
   struct {
-    integer nxtpushb[70000];
+    integer *nxtpushb;
   } _2;
 } blk13_;
 
@@ -243,10 +246,10 @@ union {
 
 union {
   struct {
-    integer i14[10000];
+    integer *i14;
   } _1;
   struct {
-    integer nxtqueue[10000];
+    integer *nxtqueue;
   } _2;
 } blk14_;
 
@@ -255,10 +258,10 @@ union {
 
 union {
   struct {
-    integer i15[10000];
+    integer *i15;
   } _1;
   struct {
-    integer extend_arc__[10000];
+    integer *extend_arc__;
   } _2;
 } blk15_;
 
@@ -267,10 +270,10 @@ union {
 
 union {
   struct {
-    integer i16[10000];
+    integer *i16;
   } _1;
   struct {
-    integer sb_level__[10000];
+    integer *sb_level__;
   } _2;
 } blk16_;
 
@@ -279,10 +282,10 @@ union {
 
 union {
   struct {
-    integer i17[10000];
+    integer *i17;
   } _1;
   struct {
-    integer sb_arc__[10000];
+    integer *sb_arc__;
   } _2;
 } blk17_;
 
@@ -294,31 +297,6 @@ struct {
 } cr_;
 
 #define cr_1 cr_
-
-/* Table of constant values */
-
-static integer c__9 = 9;
-static integer c__1 = 1;
-static integer c__3 = 3;
-static integer c__4 = 4;
-static integer c__5 = 5;
-
-
-/*  SAMPLE CALLING PROGRAM FOR RELAX-IV */
-
-/* --------------------------------------------------------------- */
-
-/*  PURPOSE - THIS PROGRAM READS IN DATA FOR A LINEAR COST */
-/*     ORDINARY NETWORK FLOW PROBLEM FROM THE FILE `RELAX4.INP', */
-/*     CALLS THE ROUTINE INIDAT TO CONSTRUCT LINKED LIST FOR THE PROBLEM, */
-/*     AND THEN CALLS THE ROUTINE RELAX4 TO SOLVE THE PROBLEM. */
-
-/*  ZIB modification: */
-/*  ---------------- */
-/*  Timing Function SECNDS replaced by DTIME */
-
-/*  G. Skorobohatyj */
-/* --------------------------------------------------------------- */
 
 /* Subroutine */ int inidat_(void)
 {
@@ -397,41 +375,25 @@ static integer c__5 = 5;
   return 0;
 } /* inidat_ */
 
-/* CONSTANTS: */
-struct ResultStruct {
-  enum {
-    RESULT_OK,
-    RESULT_INFEASIBLE_IN_FLOW_EXCEEDS_OUT_CAPACITY,
-    RESULT_INFEASIBLE_OUT_FLOW_EXCEEDS_IN_CAPACITY
-  } code;
-  integer node;
-};
-
-typedef struct ResultStruct Result;
-
 /* See NOTE 5; these are required in initialization phases 1 and 2. */
-#define ddneg ((integer *)&blk12_1)
-#define ddpos ((integer *)&blk10_1)
+#define ddneg (blk12_1.tfstin)
+#define ddpos (blk10_1.tfstou)
 
-/*  INITIALIZATION PHASE I */
-
-/*     IN THIS PHASE, WE REDUCE THE ARC CAPACITIES BY AS MUCH AS */
-/*     POSSIBLE WITHOUT CHANGING THE PROBLEM; */
-/*     THEN WE SET THE INITIAL FLOW ARRAY X, TOGETHER WITH */
-/*     THE CORRESPONDING ARRAYS U AND DFCT. */
-
-/*     THIS PHASE AND PHASE II (FROM HERE UP TO LINE LABELED 90) */
-/*     CAN BE SKIPPED (BY SETTING REPEAT TO .TRUE.) IF THE CALLING PROGRAM */
-/*     PLACES IN COMMON USER-CHOSEN VALUES FOR THE ARC FLOWS, THE RESIDUAL ARC */
-/*     CAPACITIES, AND THE NODAL DEFICITS.  WHEN THIS IS DONE, */
-/*     IT IS CRITICAL THAT THE FLOW AND THE REDUCED COST FOR EACH ARC */
-/*     SATISFY COMPLEMENTARY SLACKNESS */
-/*     AND THE DFCT ARRAY PROPERLY CORRESPOND TO THE INITIAL ARC/FLOWS. */
-Result init_phase_one(void) {
+/*
+* THIS PHASE AND PHASE II (FROM HERE UP TO LINE LABELED 90) CAN BE SKIPPED (BY
+* SETTING REPEAT TO .TRUE.) IF THE CALLING PROGRAM PLACES IN COMMON USER-CHOSEN
+* VALUES FOR THE ARC FLOWS, THE RESIDUAL ARC CAPACITIES, AND THE NODAL DEFICITS.
+* WHEN THIS IS DONE, IT IS CRITICAL THAT THE FLOW AND THE REDUCED COST FOR EACH
+* ARC SATISFY COMPLEMENTARY SLACKNESS AND THE DFCT ARRAY PROPERLY CORRESPOND TO
+* THE INITIAL ARC/FLOWS.
+*/
+int relax4_init_phase_1(void) {
 
   integer i__1, i__2;
   integer node, arc, node_def__, maxcap, scapou, scapin, capout, capin;
-  Result result;
+
+  /* CONSTRUCT LINKED LISTS FOR THE PROBLEM */
+  inidat_();
 
   i__1 = input_1.n;
   for (node = 1; node <= i__1; ++node) {
@@ -457,10 +419,8 @@ L11:
       goto L10;
     }
     if (capout < 0) {
-      /* PROBLEM IS INFEASIBLE */
-      result.code = RESULT_INFEASIBLE_IN_FLOW_EXCEEDS_OUT_CAPACITY;
-      result.node = node;
-      return result;
+      printf("PHASE 1: EXOGENOUS IN FLOW > OUT CAP AT %ld\n", node);
+      return RELAX4_INFEASIBLE;
     }
 
     scapin = 0;
@@ -487,9 +447,8 @@ L12:
       goto L10;
     }
     if (capin < 0) {
-      /* PROBLEM IS INFEASIBLE */
-      result.code = RESULT_INFEASIBLE_OUT_FLOW_EXCEEDS_IN_CAPACITY;
-      result.node = node;
+      printf("PHASE 1: EXOGENOUS OUT FLOW > IN CAP AT %ld\n", node);
+      return RELAX4_INFEASIBLE;
     }
 
     arc = blk3_2.fou[node - 1];
@@ -505,31 +464,362 @@ L10:
     ;
   }
 
-  result.code = RESULT_OK;
-  return result;
+  /* INITIALIZE DUAL PRICES */
+  /* (DEFAULT: ALL DUAL PRICES = 0, SO REDUCED COST IS SET EQUAL TO COST) */
+  for (arc = 1; arc <= input_1.na; ++arc) {
+    /* L60: */
+    arrayrc_1.rc[arc - 1] = arrayc_1.c__[arc - 1];
+  }
+
+  return RELAX4_OK;
 }
 
-/* Subroutine */ Result relax4_(void)
+/* INITIALIZE THE ARC FLOWS TO SATISFY COMPLEMENTARY SLACKNESS WITH THE */
+/* PRICES.  U(ARC) IS THE RESIDUAL CAPACITY OF ARC, AND X(ARC) IS THE FLOW. */
+/* THESE TWO ALWAYS ADD UP TO THE TOTAL CAPACITY FOR ARC. */
+/* ALSO COMPUTE THE DIRECTIONAL DERIVATIVES FOR EACH COORDINATE */
+/* AND COMPUTE THE ACTUAL DEFICITS. */
+int relax4_init_phase_2(void) {
+  integer i__1, i__2;
+  integer numpasses, node, arc, t, t1, t2, passes, delprc, trc, nxtbrk; 
+
+  i__1 = input_1.na;
+  for (arc = 1; arc <= i__1; ++arc) {
+    arrayx_1.x[arc - 1] = 0;
+    if (arrayrc_1.rc[arc - 1] <= 0) {
+      t = arrayu_1.u[arc - 1];
+      t1 = arrays_1.startn[arc - 1];
+      t2 = arraye_1.endn[arc - 1];
+      ddpos[t1 - 1] += t;
+      ddneg[t2 - 1] += t;
+      if (arrayrc_1.rc[arc - 1] < 0) {
+        arrayx_1.x[arc - 1] = t;
+        arrayu_1.u[arc - 1] = 0;
+        arrayb_2.dfct[t1 - 1] += t;
+        arrayb_2.dfct[t2 - 1] -= t;
+        ddneg[t1 - 1] -= t;
+        ddpos[t2 - 1] -= t;
+      }
+    }
+    /* L20: */
+  }
+
+  /*     MAKE 2 OR 3 PASSES THROUGH ALL NODES, PERFORMING ONLY */
+  /*     SINGLE NODE RELAXATION ITERATIONS.  THE NUMBER OF */
+  /*     PASSES DEPENDS ON THE DENSITY OF THE NETWORK */
+
+  if (input_1.na > input_1.n * 10) {
+    numpasses = 2;
+  } else {
+    numpasses = 3;
+  }
+
+  i__1 = numpasses;
+  for (passes = 1; passes <= i__1; ++passes) {
+    i__2 = input_1.n;
+    for (node = 1; node <= i__2; ++node) {
+      if (arrayb_2.dfct[node - 1] == 0) {
+        goto L40;
+      }
+      if (ddpos[node - 1] <= 0) {
+
+        /*     COMPUTE DELPRC, THE STEPSIZE TO THE NEXT BREAKPOINT */
+        /*     IN THE DUAL COST AS THE PRICE OF NODE IS INCREASED. */
+        /*     [SINCE THE REDUCED COST OF ALL OUTGOING (RESP., */
+        /*     INCOMING) ARCS WILL DECREASE (RESP., INCREASE) AS */
+        /*     THE PRICE OF NODE IS INCREASED, THE NEXT BREAKPOINT IS */
+        /*     THE MINIMUM OF THE POSITIVE REDUCED COST ON OUTGOING */
+        /*     ARCS AND OF THE NEGATIVE REDUCED COST ON INCOMING ARCS.] */
+
+        delprc = input_1.large;
+        arc = blk3_2.fou[node - 1];
+L51:
+        if (arc > 0) {
+          trc = arrayrc_1.rc[arc - 1];
+          if (trc > 0 && trc < delprc) {
+            delprc = trc;
+          }
+          arc = blk4_2.nxtou[arc - 1];
+          goto L51;
+        }
+        arc = blk5_2.fin[node - 1];
+L52:
+        if (arc > 0) {
+          trc = arrayrc_1.rc[arc - 1];
+          if (trc < 0 && trc > -delprc) {
+            delprc = -trc;
+          }
+          arc = blk6_2.nxtin[arc - 1];
+          goto L52;
+        }
+
+        /*     IF NO BREAKPOINT IS LEFT AND DUAL ASCENT IS STILL */
+        /*     POSSIBLE, THE PROBLEM IS INFEASIBLE. */
+
+        if (delprc >= input_1.large) {
+          if (ddpos[node - 1] == 0) {
+            goto L40;
+          } else {
+            return RELAX4_INFEASIBLE;
+          }
+        }
+
+        /*     DELPRC IS THE STEPSIZE TO NEXT BREAKPOINT.  INCREASE */
+        /*     PRICE OF NODE BY DELPRC AND COMPUTE THE STEPSIZE TO */
+        /*     THE NEXT BREAKPOINT IN THE DUAL COST. */
+
+L53:
+        nxtbrk = input_1.large;
+
+        /*     LOOK AT ALL ARCS OUT OF NODE. */
+
+        arc = blk3_2.fou[node - 1];
+L54:
+        if (arc > 0) {
+          trc = arrayrc_1.rc[arc - 1];
+          if (trc == 0) {
+            t1 = arraye_1.endn[arc - 1];
+            t = arrayu_1.u[arc - 1];
+            if (t > 0) {
+              arrayb_2.dfct[node - 1] += t;
+              arrayb_2.dfct[t1 - 1] -= t;
+              arrayx_1.x[arc - 1] = t;
+              arrayu_1.u[arc - 1] = 0;
+            } else {
+              t = arrayx_1.x[arc - 1];
+            }
+            ddneg[node - 1] -= t;
+            ddpos[t1 - 1] -= t;
+          }
+
+          /*     DECREASE THE REDUCED COST ON ALL OUTGOING ARCS. */
+
+          trc -= delprc;
+          if (trc > 0 && trc < nxtbrk) {
+            nxtbrk = trc;
+          } else if (trc == 0) {
+
+            /*     ARC GOES FROM INACTIVE TO BALANCED.  UPDATE THE */
+            /*     RATE OF DUAL ASCENT AT NODE AND AT ITS NEIGHBOR. */
+
+            ddpos[node - 1] += arrayu_1.u[arc - 1];
+            ddneg[arraye_1.endn[arc - 1] - 1] += arrayu_1.u[arc - 
+              1];
+          }
+          arrayrc_1.rc[arc - 1] = trc;
+          arc = blk4_2.nxtou[arc - 1];
+          goto L54;
+        }
+
+        /*     LOOK AT ALL ARCS INTO NODE. */
+
+        arc = blk5_2.fin[node - 1];
+L55:
+        if (arc > 0) {
+          trc = arrayrc_1.rc[arc - 1];
+          if (trc == 0) {
+            t1 = arrays_1.startn[arc - 1];
+            t = arrayx_1.x[arc - 1];
+            if (t > 0) {
+              arrayb_2.dfct[node - 1] += t;
+              arrayb_2.dfct[t1 - 1] -= t;
+              arrayu_1.u[arc - 1] = t;
+              arrayx_1.x[arc - 1] = 0;
+            } else {
+              t = arrayu_1.u[arc - 1];
+            }
+            ddpos[t1 - 1] -= t;
+            ddneg[node - 1] -= t;
+          }
+
+          /*     INCREASE THE REDUCED COST ON ALL INCOMING ARCS. */
+
+          trc += delprc;
+          if (trc < 0 && trc > -nxtbrk) {
+            nxtbrk = -trc;
+          } else if (trc == 0) {
+
+            /*     ARC GOES FROM ACTIVE TO BALANCED.  UPDATE THE */
+            /*     RATE OF DUAL ASCENT AT NODE AND AT ITS NEIGHBOR. */
+
+            ddneg[arrays_1.startn[arc - 1] - 1] += arrayx_1.x[arc 
+              - 1];
+            ddpos[node - 1] += arrayx_1.x[arc - 1];
+          }
+          arrayrc_1.rc[arc - 1] = trc;
+          arc = blk6_2.nxtin[arc - 1];
+          goto L55;
+        }
+
+        /*     IF PRICE OF NODE CAN BE INCREASED FURTHER WITHOUT DECREASING */
+        /*     THE DUAL COST (EVEN IF THE DUAL COST DOESN'T INCREASE), */
+        /*     RETURN TO INCREASE THE PRICE FURTHER. */
+
+        if (ddpos[node - 1] <= 0 && nxtbrk < input_1.large) {
+          delprc = nxtbrk;
+          goto L53;
+        }
+      } else if (ddneg[node - 1] <= 0) {
+
+        /*     COMPUTE DELPRC, THE STEPSIZE TO THE NEXT BREAKPOINT */
+        /*     IN THE DUAL COST AS THE PRICE OF NODE IS DECREASED. */
+        /*     [SINCE THE REDUCED COST OF ALL OUTGOING (RESP., */
+        /*     INCOMING) ARCS WILL INCREASE (RESP., DECREASE) AS */
+        /*     THE PRICE OF NODE IS DECREASED, THE NEXT BREAKPOINT IS */
+        /*     THE MINIMUM OF THE NEGATIVE REDUCED COST ON OUTGOING */
+        /*     ARCS AND OF THE POSITIVE REDUCED COST ON INCOMING ARCS.] */
+
+        delprc = input_1.large;
+        arc = blk3_2.fou[node - 1];
+L61:
+        if (arc > 0) {
+          trc = arrayrc_1.rc[arc - 1];
+          if (trc < 0 && trc > -delprc) {
+            delprc = -trc;
+          }
+          arc = blk4_2.nxtou[arc - 1];
+          goto L61;
+        }
+        arc = blk5_2.fin[node - 1];
+L62:
+        if (arc > 0) {
+          trc = arrayrc_1.rc[arc - 1];
+          if (trc > 0 && trc < delprc) {
+            delprc = trc;
+          }
+          arc = blk6_2.nxtin[arc - 1];
+          goto L62;
+        }
+
+        /*     IF NO BREAKPOINT IS LEFT AND DUAL ASCENT IS STILL */
+        /*     POSSIBLE, THE PROBLEM IS INFEASIBLE. */
+
+        if (delprc == input_1.large) {
+          if (ddneg[node - 1] == 0) {
+            goto L40;
+          } else {
+            return RELAX4_INFEASIBLE;
+          }
+        }
+
+        /*     DELPRC IS THE STEPSIZE TO NEXT BREAKPOINT.  DECREASE */
+        /*     PRICE OF NODE BY DELPRC AND COMPUTE THE STEPSIZE TO */
+        /*     THE NEXT BREAKPOINT IN THE DUAL COST. */
+
+L63:
+        nxtbrk = input_1.large;
+
+        /*     LOOK AT ALL ARCS OUT OF NODE. */
+
+        arc = blk3_2.fou[node - 1];
+L64:
+        if (arc > 0) {
+          trc = arrayrc_1.rc[arc - 1];
+          if (trc == 0) {
+            t1 = arraye_1.endn[arc - 1];
+            t = arrayx_1.x[arc - 1];
+            if (t > 0) {
+              arrayb_2.dfct[node - 1] -= t;
+              arrayb_2.dfct[t1 - 1] += t;
+              arrayu_1.u[arc - 1] = t;
+              arrayx_1.x[arc - 1] = 0;
+            } else {
+              t = arrayu_1.u[arc - 1];
+            }
+            ddpos[node - 1] -= t;
+            ddneg[t1 - 1] -= t;
+          }
+
+          /*     INCREASE THE REDUCED COST ON ALL OUTGOING ARCS. */
+
+          trc += delprc;
+          if (trc < 0 && trc > -nxtbrk) {
+            nxtbrk = -trc;
+          } else if (trc == 0) {
+
+            /*     ARC GOES FROM ACTIVE TO BALANCED.  UPDATE THE */
+            /*     RATE OF DUAL ASCENT AT NODE AND AT ITS NEIGHBOR. */
+
+            ddneg[node - 1] += arrayx_1.x[arc - 1];
+            ddpos[arraye_1.endn[arc - 1] - 1] += arrayx_1.x[arc - 
+              1];
+          }
+          arrayrc_1.rc[arc - 1] = trc;
+          arc = blk4_2.nxtou[arc - 1];
+          goto L64;
+        }
+
+        /*     LOOK AT ALL ARCS INTO NODE. */
+
+        arc = blk5_2.fin[node - 1];
+L65:
+        if (arc > 0) {
+          trc = arrayrc_1.rc[arc - 1];
+          if (trc == 0) {
+            t1 = arrays_1.startn[arc - 1];
+            t = arrayu_1.u[arc - 1];
+            if (t > 0) {
+              arrayb_2.dfct[node - 1] -= t;
+              arrayb_2.dfct[t1 - 1] += t;
+              arrayx_1.x[arc - 1] = t;
+              arrayu_1.u[arc - 1] = 0;
+            } else {
+              t = arrayx_1.x[arc - 1];
+            }
+            ddneg[t1 - 1] -= t;
+            ddpos[node - 1] -= t;
+          }
+
+          /*     DECREASE THE REDUCED COST ON ALL INCOMING ARCS. */
+
+          trc -= delprc;
+          if (trc > 0 && trc < nxtbrk) {
+            nxtbrk = trc;
+          } else if (trc == 0) {
+
+            /*     ARC GOES FROM INACTIVE TO BALANCED.  UPDATE THE */
+            /*     RATE OF DUAL ASCENT AT NODE AND AT ITS NEIGHBOR. */
+
+            ddpos[arrays_1.startn[arc - 1] - 1] += arrayu_1.u[arc 
+              - 1];
+            ddneg[node - 1] += arrayu_1.u[arc - 1];
+          }
+          arrayrc_1.rc[arc - 1] = trc;
+          arc = blk6_2.nxtin[arc - 1];
+          goto L65;
+        }
+
+        /*     IF PRICE OF NODE CAN BE DECREASED FURTHER WITHOUT DECREASING */
+        /*     THE DUAL COST (EVEN IF THE DUAL COST DOESN'T INCREASE), */
+        /*     RETURN TO DECREASE THE PRICE FURTHER. */
+
+        if (ddneg[node - 1] <= 0 && nxtbrk < input_1.large) {
+          delprc = nxtbrk;
+          goto L63;
+        }
+      }
+L40:
+      ;
+    }
+    /* L30: */
+  }
+
+  return RELAX4_OK;
+}
+
+/* Subroutine */ int relax4_(void)
 {
   /* System generated locals */
   integer i__1, i__2, i__3;
-  Result result;
-
-  /* Builtin functions */
-  integer s_wsle(cilist *), do_lio(integer *, integer *, char *, ftnlen), 
-          e_wsle(void);
-  /* Subroutine */ int s_paus(char *, ftnlen), s_stop(char *, ftnlen);
 
   /* Local variables */
-  static integer prevnode, i__, j, t, t1, t2, lastqueue, 
-                 numpasses, numnz_new__, ib, nb, dp, dm, dx, tp, ts, num_passes__, 
+  static integer prevnode, i__, j, t1, t2, lastqueue, 
+                 numnz_new__, ib, nb, dp, dm, dx, tp, ts, num_passes__, 
                  arc;
-  extern /* Subroutine */ int printflows_(integer *);
-  static integer trc, narc, node, delx;
+  static integer narc, node, delx;
   static logical1 quit;
   static integer node2;
   static integer indef;
-  /*extern doublereal dtime_(real *);*/
   static integer nscan;
   static logical1 posit;
   static integer numnz;
@@ -539,23 +829,12 @@ L10:
         , integer *, integer *);
   static logical1 feasbl;
   static integer nlabel, defcit, delprc, augnod, tmparc, 
-                 passes, rdcost, nxtarc;
+                 rdcost, nxtarc;
   static logical1 switch__;
-  static integer prvarc, nxtbrk;
+  static integer prvarc;
   static logical1 pchange;
   static integer naugnod;
-  extern /* Subroutine */ int auction_(void);
   static integer nxtnode;
-
-  /* Fortran I/O blocks */
-  static cilist io___52 = { 0, 6, 0, 0, 0 };
-  static cilist io___53 = { 0, 6, 0, 0, 0 };
-  static cilist io___56 = { 0, 6, 0, 0, 0 };
-  static cilist io___57 = { 0, 6, 0, 0, 0 };
-  static cilist io___99 = { 0, 6, 0, 0, 0 };
-  static cilist io___100 = { 0, 6, 0, 0, 0 };
-
-
 
   /* --------------------------------------------------------------- */
 
@@ -736,355 +1015,6 @@ L10:
   /*     WHICH ARE OF THE SAME SIZE (NUMBER OF NODES) AND ARE USED */
   /*     ONLY AFTER THE TREE COMES INTO USE. */
 
-  result = init_phase_one();
-  if (result.code != RESULT_OK) {
-    return result;
-  }
-
-  /* --------------------------------------------------------------- */
-
-  /*  INITIALIZATION PHASE II */
-
-  /*     IN THIS PHASE, WE INITIALIZE THE PRICES AND FLOWS BY EITHER CALLING */
-  /*     THE ROUTINE AUCTION OR BY PERFORMING ONLY SINGLE NODE (COORDINATE) */
-  /*     RELAXATION ITERATIONS. */
-
-  if (cr_1.crash == 1) {
-    output_1.nsp = 0;
-    auction_();
-    goto L70;
-  }
-
-  /*     INITIALIZE THE ARC FLOWS TO SATISFY COMPLEMENTARY SLACKNESS WITH THE */
-  /*     PRICES.  U(ARC) IS THE RESIDUAL CAPACITY OF ARC, AND X(ARC) IS THE FLOW. */
-  /*     THESE TWO ALWAYS ADD UP TO THE TOTAL CAPACITY FOR ARC. */
-  /*     ALSO COMPUTE THE DIRECTIONAL DERIVATIVES FOR EACH COORDINATE */
-  /*     AND COMPUTE THE ACTUAL DEFICITS. */
-
-  i__1 = input_1.na;
-  for (arc = 1; arc <= i__1; ++arc) {
-    arrayx_1.x[arc - 1] = 0;
-    if (arrayrc_1.rc[arc - 1] <= 0) {
-      t = arrayu_1.u[arc - 1];
-      t1 = arrays_1.startn[arc - 1];
-      t2 = arraye_1.endn[arc - 1];
-      ddpos[t1 - 1] += t;
-      ddneg[t2 - 1] += t;
-      if (arrayrc_1.rc[arc - 1] < 0) {
-        arrayx_1.x[arc - 1] = t;
-        arrayu_1.u[arc - 1] = 0;
-        arrayb_2.dfct[t1 - 1] += t;
-        arrayb_2.dfct[t2 - 1] -= t;
-        ddneg[t1 - 1] -= t;
-        ddpos[t2 - 1] -= t;
-      }
-    }
-    /* L20: */
-  }
-
-  /*     MAKE 2 OR 3 PASSES THROUGH ALL NODES, PERFORMING ONLY */
-  /*     SINGLE NODE RELAXATION ITERATIONS.  THE NUMBER OF */
-  /*     PASSES DEPENDS ON THE DENSITY OF THE NETWORK */
-
-  if (input_1.na > input_1.n * 10) {
-    numpasses = 2;
-  } else {
-    numpasses = 3;
-  }
-
-  i__1 = numpasses;
-  for (passes = 1; passes <= i__1; ++passes) {
-    i__2 = input_1.n;
-    for (node = 1; node <= i__2; ++node) {
-      if (arrayb_2.dfct[node - 1] == 0) {
-        goto L40;
-      }
-      if (ddpos[node - 1] <= 0) {
-
-        /*     COMPUTE DELPRC, THE STEPSIZE TO THE NEXT BREAKPOINT */
-        /*     IN THE DUAL COST AS THE PRICE OF NODE IS INCREASED. */
-        /*     [SINCE THE REDUCED COST OF ALL OUTGOING (RESP., */
-        /*     INCOMING) ARCS WILL DECREASE (RESP., INCREASE) AS */
-        /*     THE PRICE OF NODE IS INCREASED, THE NEXT BREAKPOINT IS */
-        /*     THE MINIMUM OF THE POSITIVE REDUCED COST ON OUTGOING */
-        /*     ARCS AND OF THE NEGATIVE REDUCED COST ON INCOMING ARCS.] */
-
-        delprc = input_1.large;
-        arc = blk3_2.fou[node - 1];
-L51:
-        if (arc > 0) {
-          trc = arrayrc_1.rc[arc - 1];
-          if (trc > 0 && trc < delprc) {
-            delprc = trc;
-          }
-          arc = blk4_2.nxtou[arc - 1];
-          goto L51;
-        }
-        arc = blk5_2.fin[node - 1];
-L52:
-        if (arc > 0) {
-          trc = arrayrc_1.rc[arc - 1];
-          if (trc < 0 && trc > -delprc) {
-            delprc = -trc;
-          }
-          arc = blk6_2.nxtin[arc - 1];
-          goto L52;
-        }
-
-        /*     IF NO BREAKPOINT IS LEFT AND DUAL ASCENT IS STILL */
-        /*     POSSIBLE, THE PROBLEM IS INFEASIBLE. */
-
-        if (delprc >= input_1.large) {
-          if (ddpos[node - 1] == 0) {
-            goto L40;
-          }
-          goto L4400;
-        }
-
-        /*     DELPRC IS THE STEPSIZE TO NEXT BREAKPOINT.  INCREASE */
-        /*     PRICE OF NODE BY DELPRC AND COMPUTE THE STEPSIZE TO */
-        /*     THE NEXT BREAKPOINT IN THE DUAL COST. */
-
-L53:
-        nxtbrk = input_1.large;
-
-        /*     LOOK AT ALL ARCS OUT OF NODE. */
-
-        arc = blk3_2.fou[node - 1];
-L54:
-        if (arc > 0) {
-          trc = arrayrc_1.rc[arc - 1];
-          if (trc == 0) {
-            t1 = arraye_1.endn[arc - 1];
-            t = arrayu_1.u[arc - 1];
-            if (t > 0) {
-              arrayb_2.dfct[node - 1] += t;
-              arrayb_2.dfct[t1 - 1] -= t;
-              arrayx_1.x[arc - 1] = t;
-              arrayu_1.u[arc - 1] = 0;
-            } else {
-              t = arrayx_1.x[arc - 1];
-            }
-            ddneg[node - 1] -= t;
-            ddpos[t1 - 1] -= t;
-          }
-
-          /*     DECREASE THE REDUCED COST ON ALL OUTGOING ARCS. */
-
-          trc -= delprc;
-          if (trc > 0 && trc < nxtbrk) {
-            nxtbrk = trc;
-          } else if (trc == 0) {
-
-            /*     ARC GOES FROM INACTIVE TO BALANCED.  UPDATE THE */
-            /*     RATE OF DUAL ASCENT AT NODE AND AT ITS NEIGHBOR. */
-
-            ddpos[node - 1] += arrayu_1.u[arc - 1];
-            ddneg[arraye_1.endn[arc - 1] - 1] += arrayu_1.u[arc - 
-              1];
-          }
-          arrayrc_1.rc[arc - 1] = trc;
-          arc = blk4_2.nxtou[arc - 1];
-          goto L54;
-        }
-
-        /*     LOOK AT ALL ARCS INTO NODE. */
-
-        arc = blk5_2.fin[node - 1];
-L55:
-        if (arc > 0) {
-          trc = arrayrc_1.rc[arc - 1];
-          if (trc == 0) {
-            t1 = arrays_1.startn[arc - 1];
-            t = arrayx_1.x[arc - 1];
-            if (t > 0) {
-              arrayb_2.dfct[node - 1] += t;
-              arrayb_2.dfct[t1 - 1] -= t;
-              arrayu_1.u[arc - 1] = t;
-              arrayx_1.x[arc - 1] = 0;
-            } else {
-              t = arrayu_1.u[arc - 1];
-            }
-            ddpos[t1 - 1] -= t;
-            ddneg[node - 1] -= t;
-          }
-
-          /*     INCREASE THE REDUCED COST ON ALL INCOMING ARCS. */
-
-          trc += delprc;
-          if (trc < 0 && trc > -nxtbrk) {
-            nxtbrk = -trc;
-          } else if (trc == 0) {
-
-            /*     ARC GOES FROM ACTIVE TO BALANCED.  UPDATE THE */
-            /*     RATE OF DUAL ASCENT AT NODE AND AT ITS NEIGHBOR. */
-
-            ddneg[arrays_1.startn[arc - 1] - 1] += arrayx_1.x[arc 
-              - 1];
-            ddpos[node - 1] += arrayx_1.x[arc - 1];
-          }
-          arrayrc_1.rc[arc - 1] = trc;
-          arc = blk6_2.nxtin[arc - 1];
-          goto L55;
-        }
-
-        /*     IF PRICE OF NODE CAN BE INCREASED FURTHER WITHOUT DECREASING */
-        /*     THE DUAL COST (EVEN IF THE DUAL COST DOESN'T INCREASE), */
-        /*     RETURN TO INCREASE THE PRICE FURTHER. */
-
-        if (ddpos[node - 1] <= 0 && nxtbrk < input_1.large) {
-          delprc = nxtbrk;
-          goto L53;
-        }
-      } else if (ddneg[node - 1] <= 0) {
-
-        /*     COMPUTE DELPRC, THE STEPSIZE TO THE NEXT BREAKPOINT */
-        /*     IN THE DUAL COST AS THE PRICE OF NODE IS DECREASED. */
-        /*     [SINCE THE REDUCED COST OF ALL OUTGOING (RESP., */
-        /*     INCOMING) ARCS WILL INCREASE (RESP., DECREASE) AS */
-        /*     THE PRICE OF NODE IS DECREASED, THE NEXT BREAKPOINT IS */
-        /*     THE MINIMUM OF THE NEGATIVE REDUCED COST ON OUTGOING */
-        /*     ARCS AND OF THE POSITIVE REDUCED COST ON INCOMING ARCS.] */
-
-        delprc = input_1.large;
-        arc = blk3_2.fou[node - 1];
-L61:
-        if (arc > 0) {
-          trc = arrayrc_1.rc[arc - 1];
-          if (trc < 0 && trc > -delprc) {
-            delprc = -trc;
-          }
-          arc = blk4_2.nxtou[arc - 1];
-          goto L61;
-        }
-        arc = blk5_2.fin[node - 1];
-L62:
-        if (arc > 0) {
-          trc = arrayrc_1.rc[arc - 1];
-          if (trc > 0 && trc < delprc) {
-            delprc = trc;
-          }
-          arc = blk6_2.nxtin[arc - 1];
-          goto L62;
-        }
-
-        /*     IF NO BREAKPOINT IS LEFT AND DUAL ASCENT IS STILL */
-        /*     POSSIBLE, THE PROBLEM IS INFEASIBLE. */
-
-        if (delprc == input_1.large) {
-          if (ddneg[node - 1] == 0) {
-            goto L40;
-          }
-          goto L4400;
-        }
-
-        /*     DELPRC IS THE STEPSIZE TO NEXT BREAKPOINT.  DECREASE */
-        /*     PRICE OF NODE BY DELPRC AND COMPUTE THE STEPSIZE TO */
-        /*     THE NEXT BREAKPOINT IN THE DUAL COST. */
-
-L63:
-        nxtbrk = input_1.large;
-
-        /*     LOOK AT ALL ARCS OUT OF NODE. */
-
-        arc = blk3_2.fou[node - 1];
-L64:
-        if (arc > 0) {
-          trc = arrayrc_1.rc[arc - 1];
-          if (trc == 0) {
-            t1 = arraye_1.endn[arc - 1];
-            t = arrayx_1.x[arc - 1];
-            if (t > 0) {
-              arrayb_2.dfct[node - 1] -= t;
-              arrayb_2.dfct[t1 - 1] += t;
-              arrayu_1.u[arc - 1] = t;
-              arrayx_1.x[arc - 1] = 0;
-            } else {
-              t = arrayu_1.u[arc - 1];
-            }
-            ddpos[node - 1] -= t;
-            ddneg[t1 - 1] -= t;
-          }
-
-          /*     INCREASE THE REDUCED COST ON ALL OUTGOING ARCS. */
-
-          trc += delprc;
-          if (trc < 0 && trc > -nxtbrk) {
-            nxtbrk = -trc;
-          } else if (trc == 0) {
-
-            /*     ARC GOES FROM ACTIVE TO BALANCED.  UPDATE THE */
-            /*     RATE OF DUAL ASCENT AT NODE AND AT ITS NEIGHBOR. */
-
-            ddneg[node - 1] += arrayx_1.x[arc - 1];
-            ddpos[arraye_1.endn[arc - 1] - 1] += arrayx_1.x[arc - 
-              1];
-          }
-          arrayrc_1.rc[arc - 1] = trc;
-          arc = blk4_2.nxtou[arc - 1];
-          goto L64;
-        }
-
-        /*     LOOK AT ALL ARCS INTO NODE. */
-
-        arc = blk5_2.fin[node - 1];
-L65:
-        if (arc > 0) {
-          trc = arrayrc_1.rc[arc - 1];
-          if (trc == 0) {
-            t1 = arrays_1.startn[arc - 1];
-            t = arrayu_1.u[arc - 1];
-            if (t > 0) {
-              arrayb_2.dfct[node - 1] -= t;
-              arrayb_2.dfct[t1 - 1] += t;
-              arrayx_1.x[arc - 1] = t;
-              arrayu_1.u[arc - 1] = 0;
-            } else {
-              t = arrayx_1.x[arc - 1];
-            }
-            ddneg[t1 - 1] -= t;
-            ddpos[node - 1] -= t;
-          }
-
-          /*     DECREASE THE REDUCED COST ON ALL INCOMING ARCS. */
-
-          trc -= delprc;
-          if (trc > 0 && trc < nxtbrk) {
-            nxtbrk = trc;
-          } else if (trc == 0) {
-
-            /*     ARC GOES FROM INACTIVE TO BALANCED.  UPDATE THE */
-            /*     RATE OF DUAL ASCENT AT NODE AND AT ITS NEIGHBOR. */
-
-            ddpos[arrays_1.startn[arc - 1] - 1] += arrayu_1.u[arc 
-              - 1];
-            ddneg[node - 1] += arrayu_1.u[arc - 1];
-          }
-          arrayrc_1.rc[arc - 1] = trc;
-          arc = blk6_2.nxtin[arc - 1];
-          goto L65;
-        }
-
-        /*     IF PRICE OF NODE CAN BE DECREASED FURTHER WITHOUT DECREASING */
-        /*     THE DUAL COST (EVEN IF THE DUAL COST DOESN'T INCREASE), */
-        /*     RETURN TO DECREASE THE PRICE FURTHER. */
-
-        if (ddneg[node - 1] <= 0 && nxtbrk < input_1.large) {
-          delprc = nxtbrk;
-          goto L63;
-        }
-      }
-L40:
-      ;
-    }
-    /* L30: */
-  }
-
-
-L70:
-
-  /* --------------------------------------------------------------- */
-
   /*     INITIALIZE TREE DATA STRUCTURE. */
   i__1 = input_1.n;
   for (i__ = 1; i__ <= i__1; ++i__) {
@@ -1109,7 +1039,7 @@ L70:
 
   /*     INITIALIZE OTHER VARIABLES. */
 
-L90:
+/* L90: */
   feasbl = TRUE_;
   output_1.iter = 0;
   output_1.nmultinode = 0;
@@ -1169,8 +1099,8 @@ L100:
   if (defcit == 0) {
     nxtnode = blk14_2.nxtqueue[node - 1];
     if (node == nxtnode) {
-      result.code = RESULT_OK;
-      return result;
+      /* DONE */
+      return RELAX4_OK;
     } else {
       blk14_2.nxtqueue[prevnode - 1] = nxtnode;
       blk14_2.nxtqueue[node - 1] = 0;
@@ -1819,7 +1749,9 @@ L4120:
   /*     CHECK TO SEE IF SWITCH NEEDS TO BE SET TO TRUE SO TO */
   /*     CONTINUE SCANNING EVEN AFTER A PRICE CHANGE. */
 
-  switch__ = switch__ || nscan > ts && numnz < ts;
+  /* Originally read "switch__ || nscan > ts && numnz < ts;" but gcc gave a
+   * "suggest parentheses" warning. */
+  switch__ = switch__ || (nscan > ts && numnz < ts);
 
   /*     SCANNING WILL CONTINUE UNTIL EITHER AN OVERESTIMATE OF THE RESIDUAL */
   /*     CAPACITY ACROSS THE CUT CORRESPONDING TO THE SCANNED SET OF NODES (CALLED */
@@ -2022,11 +1954,11 @@ L4521:
     }
   }
 
-  /*     TRY A PRICE CHANGE. */
-  /*     [NOTE THAT SINCE DELX-ABS(DM) IS AN OVERESTIMATE OF ASCENT SLOPE, WE */
-  /*     MAY OCCASIONALLY TRY A DIRECTION THAT IS NOT AN ASCENT DIRECTION. */
-  /*     IN THIS CASE, THE ASCNT ROUTINES RETURN WITH QUIT=.FALSE., */
-  /*     SO WE CONTINUE LABELING NODES. */
+  /* TRY A PRICE CHANGE. */
+  /* [NOTE THAT SINCE DELX-ABS(DM) IS AN OVERESTIMATE OF ASCENT SLOPE, WE */
+  /* MAY OCCASIONALLY TRY A DIRECTION THAT IS NOT AN ASCENT DIRECTION. */
+  /* IN THIS CASE, THE ASCNT ROUTINES RETURN WITH QUIT=.FALSE., */
+  /* SO WE CONTINUE LABELING NODES. */
 
   if (posit) {
     ascnt1_(&dm, &delx, &nlabel, &feasbl, &switch__, &nscan, &node, &
@@ -2044,7 +1976,7 @@ L4521:
     goto L100;
   }
 
-  /*     STORE THOSE NEWLY LABELED NODES TO WHICH FLOW AUGMENTATION IS POSSIBLE. */
+  /* STORE THOSE NEWLY LABELED NODES TO WHICH FLOW AUGMENTATION IS POSSIBLE. */
 
   naugnod = 0;
   i__1 = nlabel;
@@ -2207,17 +2139,7 @@ L1503:
   /*     PROBLEM IS FOUND TO BE INFEASIBLE */
 
 L4400:
-  s_wsle(&io___99);
-  do_lio(&c__9, &c__1, " PROBLEM IS FOUND TO BE INFEASIBLE.", (ftnlen)35);
-  e_wsle();
-  s_wsle(&io___100);
-  do_lio(&c__9, &c__1, "PROGRAM ENDED; PRESS <CR> TO EXIT", (ftnlen)33);
-  e_wsle();
-  s_paus("", (ftnlen)0);
-  s_stop("", (ftnlen)0);
-
-  result.code = RESULT_OK;
-  return result;
+  return RELAX4_INFEASIBLE;
 } /* relax4_ */
 
 #undef ddpos
@@ -2229,10 +2151,7 @@ L4400:
   /* System generated locals */
   integer i__1;
 
-  /* Builtin functions */
-  integer s_wsle(cilist *), do_lio(integer *, integer *, char *, ftnlen), 
-          e_wsle(void);
-  /* Subroutine */ int s_paus(char *, ftnlen), s_stop(char *, ftnlen);
+  /* Subroutine */ int s_stop(char *, ftnlen);
 
   /* Local variables */
   static integer seclevel, red_cost__, bstlevel, prevnode, i__, new_level__,
@@ -2240,13 +2159,6 @@ L4400:
                  thresh_dfct__, node, pend, naug, incr, last, pass, term, flow, 
                  root, resid, pterm, start, secarc, factor, extarc, rdcost, nolist,
                  pstart, prevarc, pr_term__, mincost, maxcost, nxtnode;
-
-  /* Fortran I/O blocks */
-  static cilist io___127 = { 0, 6, 0, 0, 0 };
-  static cilist io___128 = { 0, 6, 0, 0, 0 };
-  static cilist io___129 = { 0, 6, 0, 0, 0 };
-
-
 
   /* --------------------------------------------------------------- */
 
@@ -2372,6 +2284,12 @@ L100:
     /* L110: */
   }
 
+  /* HACK: -O2 or -O3 with -Wall on 4.4.3 gives an "array subscript is below
+   * array bounds" warning here, but I can't work out why. It seems to think
+   * that input_1.n < 1, but this is not plausible. So, I've put in an
+   * assertion; will see if other versions of gcc also complain.
+   */
+  assert(input_1.n > 0);
   blk14_2.nxtqueue[input_1.n - 1] = 1;
   root = 1;
   prevnode = input_1.n;
@@ -2506,11 +2424,11 @@ L504:
     goto L600;
   }
 
-  /*     SPECULATIVE PATH EXTENSION ATTEMPT */
-  /*     NOTE: ARC>0 MEANS THAT ARC IS ORIENTED FROM THE ROOT TO THE DESTINATIONS */
-  /*     ARC<0 MEANS THAT ARC IS ORIENTED FROM THE DESTINATIONS TO THE ROOT */
-  /*     EXTARC=0 OR PRDARC=0, MEANS THE EXTENSION ARC OR THE PREDECESSOR ARC, */
-  /*     RESPECTIVELY, HAS NOT BEEN ESTABLISHED */
+  /* SPECULATIVE PATH EXTENSION ATTEMPT */
+  /* NOTE: ARC>0 MEANS THAT ARC IS ORIENTED FROM THE ROOT TO THE DESTINATIONS */
+  /* ARC<0 MEANS THAT ARC IS ORIENTED FROM THE DESTINATIONS TO THE ROOT */
+  /* EXTARC=0 OR PRDARC=0, MEANS THE EXTENSION ARC OR THE PREDECESSOR ARC, */
+  /* RESPECTIVELY, HAS NOT BEEN ESTABLISHED */
 
   /* L510: */
   if (extarc > 0) {
@@ -2656,19 +2574,7 @@ L800:
   if (term == root) {
     blk1_4.p[term - 1] = bstlevel + eps;
     if (pterm >= input_1.large) {
-      s_wsle(&io___127);
-      do_lio(&c__9, &c__1, "NO PATH TO THE DESTINATION", (ftnlen)26);
-      e_wsle();
-      s_wsle(&io___128);
-      do_lio(&c__9, &c__1, " PROBLEM IS FOUND TO BE INFEASIBLE.", (
-            ftnlen)35);
-      e_wsle();
-      s_wsle(&io___129);
-      do_lio(&c__9, &c__1, "PROGRAM ENDED; PRESS <CR> TO EXIT", (ftnlen)
-          33);
-      e_wsle();
-      s_paus("", (ftnlen)0);
-      s_stop("", (ftnlen)0);
+      return RELAX4_INFEASIBLE;
     }
     blk9_2.path_id__[root - 1] = FALSE_;
     prevnode = root;
@@ -3092,130 +2998,6 @@ L3000:
   }
   return 0;
 } /* auction_ */
-
-
-
-/* Subroutine */ int printflows_(integer *node)
-{
-  /* Builtin functions */
-  integer s_wsle(cilist *), do_lio(integer *, integer *, char *, ftnlen), 
-          e_wsle(void);
-
-  /* Local variables */
-  static integer arc;
-
-  /* Fortran I/O blocks */
-  static cilist io___142 = { 0, 6, 0, 0, 0 };
-  static cilist io___143 = { 0, 6, 0, 0, 0 };
-  static cilist io___144 = { 0, 6, 0, 0, 0 };
-  static cilist io___146 = { 0, 6, 0, 0, 0 };
-  static cilist io___147 = { 0, 6, 0, 0, 0 };
-  static cilist io___148 = { 0, 6, 0, 0, 0 };
-  static cilist io___149 = { 0, 6, 0, 0, 0 };
-  static cilist io___150 = { 0, 6, 0, 0, 0 };
-  static cilist io___151 = { 0, 6, 0, 0, 0 };
-  static cilist io___152 = { 0, 6, 0, 0, 0 };
-
-
-
-  /* --------------------------------------------------------------- */
-
-  /*  PURPOSE - THIS ROUTINE PRINTS THE DEFICIT AND THE FLOWS */
-  /*     OF ARCS INCIDENT TO NODE.  IT IS USED FOR DIAGNOSTIC */
-  /*     PURPOSES IN CASE OF AN INFEASIBLE PROBLEM HERE. */
-  /*     IT CAN BE USED ALSO FOR MORE GENERAL DIAGNOSTIC */
-  /*     PURPOSES. */
-
-  /* --------------------------------------------------------------- */
-
-  /*     MAXNN = DIMENSION OF NODE-LENGTH ARRAYS */
-  /*     MAXNA = DIMENSION OF ARC-LENGTH ARRAYS */
-
-
-
-
-  /* --------------------------------------------------------------- */
-
-  s_wsle(&io___142);
-  do_lio(&c__9, &c__1, "DEFICIT (I.E., NET FLOW OUT) OF NODE =", (ftnlen)38)
-    ;
-  do_lio(&c__3, &c__1, (char *)&arrayb_2.dfct[*node - 1], (ftnlen)sizeof(
-        integer));
-  e_wsle();
-  s_wsle(&io___143);
-  do_lio(&c__9, &c__1, "FLOWS AND CAPACITIES OF INCIDENT ARCS OF NODE", (
-        ftnlen)45);
-  do_lio(&c__3, &c__1, (char *)&(*node), (ftnlen)sizeof(integer));
-  e_wsle();
-
-  /*     CHECK ALL ARCS LEAVING NODE */
-
-  if (blk3_2.fou[*node - 1] == 0) {
-    s_wsle(&io___144);
-    do_lio(&c__9, &c__1, "NO OUTGOING ARCS", (ftnlen)16);
-    e_wsle();
-  } else {
-    arc = blk3_2.fou[*node - 1];
-L5:
-    if (arc > 0) {
-      s_wsle(&io___146);
-      do_lio(&c__9, &c__1, "ARC", (ftnlen)3);
-      do_lio(&c__3, &c__1, (char *)&arc, (ftnlen)sizeof(integer));
-      do_lio(&c__9, &c__1, "  BETWEEN NODES", (ftnlen)15);
-      do_lio(&c__3, &c__1, (char *)&(*node), (ftnlen)sizeof(integer));
-      do_lio(&c__3, &c__1, (char *)&arraye_1.endn[arc - 1], (ftnlen)
-          sizeof(integer));
-      e_wsle();
-      s_wsle(&io___147);
-      do_lio(&c__9, &c__1, "FLOW =", (ftnlen)6);
-      do_lio(&c__3, &c__1, (char *)&arrayx_1.x[arc - 1], (ftnlen)sizeof(
-            integer));
-      e_wsle();
-      s_wsle(&io___148);
-      do_lio(&c__9, &c__1, "RESIDUAL CAPACITY =", (ftnlen)19);
-      do_lio(&c__3, &c__1, (char *)&arrayu_1.u[arc - 1], (ftnlen)sizeof(
-            integer));
-      e_wsle();
-      arc = blk4_2.nxtou[arc - 1];
-      goto L5;
-    }
-  }
-
-  /*     CHECK ALL ARCS INCOMING TO NODE */
-
-  if (blk5_2.fin[*node - 1] == 0) {
-    s_wsle(&io___149);
-    do_lio(&c__9, &c__1, "NO INCOMING ARCS", (ftnlen)16);
-    e_wsle();
-  } else {
-    arc = blk5_2.fin[*node - 1];
-L10:
-    if (arc > 0) {
-      s_wsle(&io___150);
-      do_lio(&c__9, &c__1, "ARC", (ftnlen)3);
-      do_lio(&c__3, &c__1, (char *)&arc, (ftnlen)sizeof(integer));
-      do_lio(&c__9, &c__1, "  BETWEEN NODES", (ftnlen)15);
-      do_lio(&c__3, &c__1, (char *)&arrays_1.startn[arc - 1], (ftnlen)
-          sizeof(integer));
-      do_lio(&c__3, &c__1, (char *)&(*node), (ftnlen)sizeof(integer));
-      e_wsle();
-      s_wsle(&io___151);
-      do_lio(&c__9, &c__1, "FLOW =", (ftnlen)6);
-      do_lio(&c__3, &c__1, (char *)&arrayx_1.x[arc - 1], (ftnlen)sizeof(
-            integer));
-      e_wsle();
-      s_wsle(&io___152);
-      do_lio(&c__9, &c__1, "RESIDUAL CAPACITY =", (ftnlen)19);
-      do_lio(&c__3, &c__1, (char *)&arrayu_1.u[arc - 1], (ftnlen)sizeof(
-            integer));
-      e_wsle();
-      arc = blk6_2.nxtin[arc - 1];
-      goto L10;
-    }
-  }
-
-  return 0;
-} /* printflows_ */
 
 
 
@@ -3958,22 +3740,16 @@ L30:
   return 0;
 } /* addtr_ */
 
-
-#if 0
-/* Main program alias */ int main_ () { MAIN__ (); return 0; }
-#endif
-
-int run_relax4(integer num_nodes, integer num_arcs,
+int relax4_init(integer num_nodes, integer num_arcs,
     integer start_node[],
     integer end_node[],
     integer cost[],
     integer capacity[],
     integer demand[],
-    integer flows[], integer use_auction_init)
+    integer flows[],
+    integer large)
 {
-  integer i;
-
-  /* Set pointers into output data. */
+  /* Set input/output pointers. */
   input_1.n = num_nodes;
   input_1.na = num_arcs;
   arrays_1.startn = start_node;
@@ -3983,49 +3759,93 @@ int run_relax4(integer num_nodes, integer num_arcs,
   arrayb_1.b = demand;
   arrayx_1.x = flows;
 
-  /*
-     printf("demand[0] = %ld\n", demand[0]);
-     printf("demand[1] = %ld\n", demand[1]);
-     printf("b[0] = %ld\n", arrayb_1.b[0]);
-     printf("b[1] = %ld\n", arrayb_1.b[1]);
-     printf("dfct[0] = %ld\n", arrayb_2.dfct[0]);
-     printf("dfct[1] = %ld\n", arrayb_2.dfct[1]);
-     */
+  /* Set parameters. */
+  input_1.large = large;
+  cr_1.crash = 0;
 
-  /* need to be malloc'd:
-   *
-   *arrayrc_1.rc
-   * */
+  /* Allocate working arrays (one per block). */
+  arrayrc_1.rc = NULL;
+  blk1_1.i1 = NULL;
+  blk2_1.i2 = NULL;
+  blk3_1.i3 = NULL;
+  blk4_1.i4 = NULL;
+  blk5_1.i5 = NULL;
+  blk6_1.i6 = NULL;
+  blk7_1.i7 = NULL;
+  blk8_1.scan = NULL;
+  blk9_1.mark = NULL;
+  blk10_1.tfstou = NULL;
+  blk11_1.tnxtou = NULL;
+  blk12_1.tfstin = NULL;
+  blk13_1.tnxtin = NULL;
+  blk14_1.i14 = NULL;
+  blk15_1.i15 = NULL;
+  blk16_1.i16 = NULL;
+  blk17_1.i17 = NULL;
 
-  /* Note 3: INT_MAX / 4 is recommended, which looks about right*/
-  input_1.large = 500000000;
+  arrayrc_1.rc   = malloc(num_arcs*sizeof(integer));
+  blk1_1.i1      = malloc(num_nodes*sizeof(integer));
+  blk2_1.i2      = malloc(num_nodes*sizeof(integer));
+  blk3_1.i3      = malloc(num_nodes*sizeof(integer));
+  blk4_1.i4      = malloc(num_arcs*sizeof(integer));
+  blk5_1.i5      = malloc(num_nodes*sizeof(integer));
+  blk6_1.i6      = malloc(num_arcs*sizeof(integer));
+  blk7_1.i7      = malloc(num_arcs*sizeof(integer));
+  blk8_1.scan    = malloc(num_nodes*sizeof(logical1));
+  blk9_1.mark    = malloc(num_nodes*sizeof(logical1));
+  blk10_1.tfstou = malloc(num_nodes*sizeof(integer));
+  blk11_1.tnxtou = malloc(num_arcs*sizeof(integer));
+  blk12_1.tfstin = malloc(num_nodes*sizeof(integer));
+  blk13_1.tnxtin = malloc(num_arcs*sizeof(integer));
+  blk14_1.i14    = malloc(num_nodes*sizeof(integer));
+  blk15_1.i15    = malloc(num_nodes*sizeof(integer));
+  blk16_1.i16    = malloc(num_nodes*sizeof(integer));
+  blk17_1.i17    = malloc(num_nodes*sizeof(integer));
 
-  /* CHECK DATA IS WITHIN RANGE OF MACHINE */
-  /*danger_thresh__ = input_1.large / 10;*/
-  /* I have cut this bit for now... */
-
-  /* CONSTRUCT LINKED LISTS FOR THE PROBLEM */
-  inidat_();
-
-  /* INITIALIZE DUAL PRICES */
-  /* (DEFAULT: ALL DUAL PRICES = 0, SO REDUCED COST IS SET EQUAL TO COST) */
-  for (i = 1; i <= num_arcs; ++i) {
-    /* L60: */
-    arrayrc_1.rc[i - 1] = arrayc_1.c__[i - 1];
+  if (arrayrc_1.rc == NULL ||
+      blk1_1.i1 == NULL ||
+      blk2_1.i2 == NULL ||
+      blk3_1.i3 == NULL ||
+      blk4_1.i4 == NULL ||
+      blk5_1.i5 == NULL ||
+      blk6_1.i6 == NULL ||
+      blk7_1.i7 == NULL ||
+      blk8_1.scan == NULL ||
+      blk9_1.mark == NULL ||
+      blk10_1.tfstou == NULL ||
+      blk11_1.tnxtou == NULL ||
+      blk12_1.tfstin == NULL ||
+      blk13_1.tnxtin == NULL ||
+      blk14_1.i14 == NULL ||
+      blk15_1.i15 == NULL ||
+      blk16_1.i16 == NULL ||
+      blk17_1.i17 == NULL) {
+    relax4_free();
+    return RELAX4_FAIL_OUT_OF_MEMORY;
   }
 
-  /* --------------------------------------------------------------- */
+  return RELAX4_OK;
+}
 
+int relax4_auction() 
+{
   /* SET CRASH EQUAL TO 1 TO ACTIVATE AN AUCTION/SHORTEST PATH SUBROUTINE FOR */
   /* GETTING THE INITIAL PRICE-FLOW PAIR. THIS IS RECOMMENDED FOR DIFFICULT */
   /* PROBLEMS WHERE THE DEFAULT INITIALIZATION YIELDS LONG SOLUTION TIMES. */
-  cr_1.crash = use_auction_init ? 1 : 0;
+  cr_1.crash = 1;
+
+  output_1.nsp = 0;
+  return auction_();
+}
+
+int relax4_run()
+{
+  /* CHECK DATA IS WITHIN RANGE OF MACHINE */
+  /*danger_thresh__ = input_1.large / 10;*/
+  /* TODO I have cut this bit for now... */
 
   /* CALL RELAX4 TO SOLVE THE PROBLEM */
   relax4_();
-
-  /* CHECK CORRECTNESS OF OUTPUT PARAMETERS */
-  /* TODO do this somewhere (separate method) */
 
   /*     DISPLAY RELAX4 STATISTICS */
   if (cr_1.crash == 1) {
@@ -4037,5 +3857,49 @@ int run_relax4(integer num_nodes, integer num_arcs,
   printf("NUMBER OF REGULAR AUGMENTATIONS = %ld\n", output_1.num_augm__);
 
   return 0;
+}
+
+int relax4_check_output()
+{
+  integer i;
+
+  for (i = 1; i <= input_1.n; ++i) {
+    if (arrayb_1.b[i - 1] != 0)
+      return RELAX4_OUTPUT_FAIL_NONZERO_DEMAND;
+  }
+
+  for (i = 1; i <= input_1.na; ++i) {
+    if (arrayx_1.x[i - 1] > 0 && arrayrc_1.rc[i - 1] > 0)
+      return RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS;
+  }
+
+  for (i = 1; i <= input_1.na; ++i) {
+    if (arrayu_1.u[i - 1] > 0 && arrayrc_1.rc[i - 1] < 0)
+      return RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS;
+  }
+
+  return RELAX4_OK;
+}
+
+void relax4_free()
+{
+  if(arrayrc_1.rc  ) free(arrayrc_1.rc  );
+  if(blk1_1.i1     ) free(blk1_1.i1     );
+  if(blk2_1.i2     ) free(blk2_1.i2     );
+  if(blk3_1.i3     ) free(blk3_1.i3     );
+  if(blk4_1.i4     ) free(blk4_1.i4     );
+  if(blk5_1.i5     ) free(blk5_1.i5     );
+  if(blk6_1.i6     ) free(blk6_1.i6     );
+  if(blk7_1.i7     ) free(blk7_1.i7     );
+  if(blk8_1.scan   ) free(blk8_1.scan   );
+  if(blk9_1.mark   ) free(blk9_1.mark   );
+  if(blk10_1.tfstou) free(blk10_1.tfstou);
+  if(blk11_1.tnxtou) free(blk11_1.tnxtou);
+  if(blk12_1.tfstin) free(blk12_1.tfstin);
+  if(blk13_1.tnxtin) free(blk13_1.tnxtin);
+  if(blk14_1.i14   ) free(blk14_1.i14   );
+  if(blk15_1.i15   ) free(blk15_1.i15   );
+  if(blk16_1.i16   ) free(blk16_1.i16   );
+  if(blk17_1.i17   ) free(blk17_1.i17   );
 }
 
