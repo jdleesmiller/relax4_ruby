@@ -25,9 +25,11 @@ class TestRelax4< Test::Unit::TestCase
       :costs       => [ 2, 5, 3, 7, 1],
       :capacities  => [ 5, 2, 1, 2, 4]}
     soln =            [ 2, 2, 1, 1, 3]
-    assert_equal soln, Relax4.solve(prob)
+    flows = Relax4.solve(prob)
+    assert_equal soln, flows
+    assert_equal 27, flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
+
     assert_equal soln, Relax4.solve(prob.merge(:auction_init => true))
-    # note: total cost is 27
   end
 
   def test_solve_3
