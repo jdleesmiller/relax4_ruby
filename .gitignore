@@ -1,0 +1,6 @@
+.*.swp
+/ext/*.o
+/ext/*.so
+/coverage
+/doc
+/ext/Makefile
