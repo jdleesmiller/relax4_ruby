@@ -17,20 +17,25 @@ module Relax4
   #
   # @param [Hash] args named arguments
   #
-  # @option args [Array<Integer>] :start_nodes indices of node at the start of
+  # @option args [Array<Integer>] :start_nodes index of node at the start of
   # each arc, where the first node is numbered 1.
   #
-  # @option args [Array<Integer>] :end_nodes indices of node at the end of each
+  # @option args [Array<Integer>] :end_nodes index of node at the end of each
   # arc, where the first node is numbered 1.
   #
-  # @option args [Array<Integer>] :costs costs for each arc; negative costs are
-  # allowed; negative cost cycles are allowed (see notes in {README.rdoc}).
+  # @option args [Array<Integer>] :costs for each arc; negative costs are
+  # allowed; negative cost cycles are allowed (edges involved in the cycle are
+  # set to large); all costs must be less than +large+ and should be less than
+  # <tt>large/10</tt> to avoid overflow (see RELAX4_DEFAULT_MAX_COST in
+  # relax4.h, above).
   #
   # @option args [Array<Integer>] :capacities (nil) for each arc; if not
-  # specified, all arc capacities are set to +large+.
+  # specified (problem is uncapacitated), all arc capacities are set to +large+;
+  # capacities must be in [0, +large+].
   #
   # @option args [Array<Integer>] :demands for each node; a node with negative
-  # supply is a surplus node.
+  # demand is a surplus node; demands should balance (sum to zero), or else the
+  # problem will be infeasible (but you can add a dummy node).
   #
   # @option args [Boolean] :auction_init (false) use the auction routine to find
   # an initial feasible solution; this is recommended only for hard problems.
@@ -38,7 +43,13 @@ module Relax4
   # @option args [Integer] :large (RELAX4_DEFAULT_LARGE) a very large integer to
   # represent infinity; see the ext/relax4.h listing above for more info.
   #
+  # @option args [Integer] :max_cost (RELAX4_DEFAULT_MAX_COST) largest allowed
+  # cost, in order to avoid integer overflow; see the ext/relax4.h listing above
+  # for more info.
+  #
   # @return [Array<Integer>] optimal flows for each arc
+  #
+  # @raise [ArgumentError] if problem inputs are invalid
   #
   # @raise [InfeasibleError] if problem is infeasible
   #
@@ -48,18 +59,16 @@ module Relax4
     end_nodes   = get_arg(args, :end_nodes)
     costs       = get_arg(args, :costs)
     large       = args[:large] || RELAX4_DEFAULT_LARGE
+    max_cost    = args[:max_cost] || RELAX4_DEFAULT_MAX_COST
     num_arcs    = start_nodes.size
     capacities  = args[:capacities] || [large]*num_arcs
 
     sizes = [start_nodes, end_nodes, costs, capacities].map{|a| a.size}
-    raise "bad sizes: start/end_nodes, costs, capacities: #{sizes.join(',')}"\
-      unless sizes.all? {|s| s == num_arcs}
+    raise ArgumentError.new("bad sizes for start/end_nodes, costs, capacities:"\
+      " #{sizes.join(',')}") unless sizes.all? {|s| s == num_arcs}
 
     demands     = get_arg(args, :demands)
     num_nodes   = demands.size
-
-    bad = [start_nodes,end_nodes].map{|a| a.reject{|i| 0 < i && i <= num_nodes}}
-    raise "bad nodes: #{bad.flatten.join(',')}" unless bad.all? {|a| a.empty?}
 
     flows_ia = IntegerArray.new(num_arcs)
     case relax4_init(num_nodes, num_arcs,
@@ -78,6 +87,21 @@ module Relax4
     end
 
     begin
+      case relax4_check_inputs(max_cost)
+      when RELAX4_OK:
+        # continue
+      when RELAX4_FAIL_BAD_SIZE:
+        raise ArgumentError.new('problem has zero nodes or zero arcs')
+      when RELAX4_FAIL_BAD_NODE:
+        raise ArgumentError.new('start_nodes or end_nodes has a bad index')
+      when RELAX4_FAIL_BAD_COST:
+        raise ArgumentError.new("a cost exceeds the maximum (#{max_cost})")
+      when RELAX4_FAIL_BAD_CAPACITY:
+        raise ArgumentError.new("a capacity exceeds the maximum (#{large})")
+      else
+        raise "relax4_check_inputs failed with unrecognized code"
+      end
+
       case relax4_init_phase_1()
       when RELAX4_OK:
         # continue
@@ -88,15 +112,6 @@ module Relax4
       end
 
       if args[:auction_init]
-        case relax4_init_phase_2()
-        when RELAX4_OK:
-          # continue
-        when RELAX4_INFEASIBLE:
-          raise InfeasibleError.new("infeasibility detected in phase 2 init")
-        else
-          raise "relax4_init_phase_2 failed with unrecognized code"
-        end
-      else
         case relax4_auction()
         when RELAX4_OK:
           # continue
@@ -104,6 +119,15 @@ module Relax4
           raise InfeasibleError.new("infeasibility detected in auction")
         else
           raise "relax4_auction failed with unrecognized code"
+        end
+      else
+        case relax4_init_phase_2()
+        when RELAX4_OK:
+          # continue
+        when RELAX4_INFEASIBLE:
+          raise InfeasibleError.new("infeasibility detected in phase 2 init")
+        else
+          raise "relax4_init_phase_2 failed with unrecognized code"
         end
       end
 
@@ -146,7 +170,7 @@ module Relax4
 
   #
   # Provided by SWIG for exchanging data with the solver.
-  # Intended for internal use; see {Relax4.relax4_run}.
+  # Intended for internal use; see relax4_init in relax4.h, above.
   # You do not have to use this if you call {Relax4.solve}.
   #
   class IntegerArray
