@@ -6,7 +6,7 @@ require 'relax4/version'
 Gem::Specification.new do |s|
   s.name        = "relax4"
   s.version     = Relax4::VERSION
-  s.platform    = Gem::Platform::CURRENT
+  s.platform    = Gem::Platform::RUBY
   s.authors     = ["John Lees-Miller"]
   s.email       = ["jdleesmiller@gmail.com"]
   s.homepage    = "http://relax4.rubyforge.org/"
