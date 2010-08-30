@@ -1,7 +1,7 @@
 %module relax4
 
 %{
-#include "f2c.h"
+#include "relax4_f2c.h"
 #include "relax4.h"
 %}
 
