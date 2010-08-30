@@ -1,5 +1,9 @@
 = relax4_ruby
 
+http://relax4.rubyforge.org
+
+http://github.com/jdleesmiller/relax4_ruby
+
 == DESCRIPTION
 
 Ruby interface for the RELAX IV code for the minimum cost network flow problem.
