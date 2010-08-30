@@ -55,6 +55,12 @@ task :rdoc_sh do |t|
     "README.rdoc #{Dir.glob('lib/**/*.rb').join(' ')}"
 end
 
+desc "docs to rubyforge"
+task :publish_docs => :rdoc_sh do
+  sh "rsync --archive --delete --verbose doc/* "\
+     " jdleesmiller@rubyforge.org:/var/www/gforge-projects/relax4"
+end
+
 begin
   require 'rcov/rcovtask'
   Rcov::RcovTask.new do |test|
@@ -75,4 +81,5 @@ CLOBBER.include('ext/*.so')
 
 task :test => EXT
 task :default => :test
+
 
