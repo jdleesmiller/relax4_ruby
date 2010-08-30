@@ -63,15 +63,29 @@ A lower-level interface is also available; see the docs for the Relax4 module.
 
 == REQUIREMENTS
 
-Currently tested only on 32-bit Linux (Ubuntu 10.04) and Ruby 1.8.7.
 The following packages were required to install on Ubuntu 10.04:
 
 * ruby, ruby-dev, rubygems, rake
 
-The bindings were generated with f2c (FORTRAN to C converter) and swig
-(www.swig.org), but you don't need f2c or SWIG to build the gem.
+The bindings were generated with f2c (FORTRAN to C converter) and SWIG
+(www.swig.org), but you don't need either to build the gem.
+
+Has been tested on:
+* x86-linux (Ubuntu 10.04) with Ruby 1.8.7-p302
+* x86-linux (Ubuntu 10.04) with Ruby 1.9.2-p0
+* x86_64-linux (CentOS) with Ruby 1.8.7-p72
 
 == INSTALL
+
+You should be able to install with
+
+  gem install relax4
+
+on an x86_64-linux machine. Otherwise, you'll have to get the source
+
+  git clone http://github.com/jdleesmiller/relax4_ruby.git
+  
+and run
 
   gem build relax4.gemspec
   gem install relax4-<version>.gem
