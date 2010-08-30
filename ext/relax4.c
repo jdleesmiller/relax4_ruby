@@ -1,14 +1,12 @@
-/* relax4.f -- translated by f2c (version 20090411).
-   You must link the resulting object file with libf2c:
-   on Microsoft Windows system, link with libf2c.lib;
-   on Linux or Unix systems, link with .../path/to/libf2c.a -lm
-   or, if you install libf2c.a in a standard place, with -lf2c -lm
-   -- in that order, at the end of the command line, as in
-   cc *.o -lf2c -lm
-   Source for libf2c is in /netlib/f2c/libf2c.zip, e.g.,
-
-http://www.netlib.org/f2c/libf2c.zip
-*/
+/**
+ * This file was translated by f2c (FORTRAN to C) (version 20090411) from
+ * relax4.f (see http://www.netlib.org/f2c).
+ *
+ * It has been modified (JLM) for use as a library (see relax4.h).
+ *
+ * The f2c linkage dependencies have been removed, but the FORTRAN character of
+ * the code has been largely preserved -- you have been warned.
+ */
 
 #include "stdlib.h"
 /*#include "stdio.h" */ /* just for tracing*/
@@ -3741,22 +3739,22 @@ L30:
 } /* addtr_ */
 
 int relax4_init(integer num_nodes, integer num_arcs,
-    integer start_node[],
-    integer end_node[],
-    integer cost[],
-    integer capacity[],
-    integer demand[],
+    integer start_nodes[],
+    integer end_nodes[],
+    integer costs[],
+    integer capacities[],
+    integer demands[],
     integer flows[],
     integer large)
 {
   /* Set input/output pointers. */
   input_1.n = num_nodes;
   input_1.na = num_arcs;
-  arrays_1.startn = start_node;
-  arraye_1.endn = end_node;
-  arrayc_1.c__ = cost;
-  arrayu_1.u = capacity;
-  arrayb_1.b = demand;
+  arrays_1.startn = start_nodes;
+  arraye_1.endn = end_nodes;
+  arrayc_1.c__ = costs;
+  arrayu_1.u = capacities;
+  arrayb_1.b = demands;
   arrayx_1.x = flows;
 
   /* Set parameters. */
@@ -3827,25 +3825,55 @@ int relax4_init(integer num_nodes, integer num_arcs,
   return RELAX4_OK;
 }
 
+int relax4_check_inputs(int max_cost)
+{
+  integer i;
+
+  if (input_1.n < 1 || input_1.na < 1) {
+    return RELAX4_FAIL_BAD_SIZE;
+  }
+
+  /* start nodes */
+  for (i = 1; i <= input_1.na; ++i) {
+    if (arrays_1.startn[i-1] < 1 || arrays_1.startn[i-1] > input_1.n)
+      return RELAX4_FAIL_BAD_NODE;
+  }
+
+  /* end nodes */
+  for (i = 1; i <= input_1.na; ++i) {
+    if (arraye_1.endn[i-1] < 1 || arraye_1.endn[i-1] > input_1.n)
+      return RELAX4_FAIL_BAD_NODE;
+  }
+
+  /* costs */
+  for (i = 1; i <= input_1.na; ++i) {
+    if (abs(arrayc_1.c__[i-1]) > max_cost)
+      return RELAX4_FAIL_BAD_COST;
+  }
+
+  /* capacities */
+  for (i = 1; i <= input_1.na; ++i) {
+    if (arrayu_1.u[i-1] < 0 || arrayu_1.u[i-1] > input_1.large)
+      return RELAX4_FAIL_BAD_CAPACITY;
+  }
+
+  return RELAX4_OK;
+}
+
 int relax4_auction() 
 {
   /* SET CRASH EQUAL TO 1 TO ACTIVATE AN AUCTION/SHORTEST PATH SUBROUTINE FOR */
   /* GETTING THE INITIAL PRICE-FLOW PAIR. THIS IS RECOMMENDED FOR DIFFICULT */
   /* PROBLEMS WHERE THE DEFAULT INITIALIZATION YIELDS LONG SOLUTION TIMES. */
   cr_1.crash = 1;
-
   output_1.nsp = 0;
   return auction_();
 }
 
 int relax4_run()
 {
-  /* CHECK DATA IS WITHIN RANGE OF MACHINE */
-  /*danger_thresh__ = input_1.large / 10;*/
-  /* TODO I have cut this bit for now... */
-
   /* CALL RELAX4 TO SOLVE THE PROBLEM */
-  relax4_();
+  int result = relax4_();
 
   /*     DISPLAY RELAX4 STATISTICS */
   /*
@@ -3858,7 +3886,7 @@ int relax4_run()
   printf("NUMBER OF REGULAR AUGMENTATIONS = %ld\n", output_1.num_augm__);
   */
 
-  return 0;
+  return result;
 }
 
 int relax4_check_output()

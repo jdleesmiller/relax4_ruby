@@ -5,54 +5,114 @@
 #define RELAX4_OK 0
 #define RELAX4_INFEASIBLE 1
 #define RELAX4_FAIL_OUT_OF_MEMORY 2
+#define RELAX4_FAIL_BAD_SIZE 3
+#define RELAX4_FAIL_BAD_NODE 4
+#define RELAX4_FAIL_BAD_COST 5
+#define RELAX4_FAIL_BAD_CAPACITY 6
 #define RELAX4_OUTPUT_FAIL_NONZERO_DEMAND 101
 #define RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS 102
 
 /**
- * The default value used for the LARGE parameter. It is set to 500 million,
- * which is the value in the original relax4 source.
+ * The default value used for the <tt>large</tt> parameter. It is set to 500
+ * million, which is the value in the original relax4 source.
  *
- * Guidance on how to set LARGE is given in Note 3:
+ * Further guidance on how to set <tt>large</tt> is given in NOTE 3 in the
+ * original source:
  * ALL PROBLEM DATA SHOULD BE LESS THAN LARGE IN MAGNITUDE, AND LARGE SHOULD BE
  * LESS THAN, SAY, 1/4 THE LARGEST INTEGER*4 OF THE MACHINE USED.  THIS WILL
  * GUARD PRIMARILY AGAINST OVERFLOW IN UNCAPACITATED PROBLEMS WHERE THE ARC
  * CAPACITIES ARE TAKEN FINITE BUT VERY LARGE.  NOTE, HOWEVER, THAT AS IN ALL
  * CODES OPERATING WITH INTEGERS, OVERFLOW MAY OCCUR IF SOME OF THE PROBLEM DATA
  * TAKES VERY LARGE VALUES.
+ *
+ * Edge capacities must be non-negative and less than or equal to
+ * <tt>large</tt>, and edge costs should not exceed <tt>large/10</tt> in
+ * absolute value, in order to avoid overflow (see RELAX4_DEFAULT_MAX_COST).
  */
 #define RELAX4_DEFAULT_LARGE 500000000
 
 /**
+ * The guidance in the original relax4 source is that edge costs should not
+ * exceed <tt>large/10</tt> in absolute value, in order to avoid overflow.
+ *
+ * This can be enforced by the relax4_check_inputs function.
+ */
+#define RELAX4_DEFAULT_MAX_COST (RELAX4_DEFAULT_LARGE/10)
+
+/**
  * Set global state and allocate memory for internal arrays.
  *
- * The input arrays are not copied.
+ * The input arrays are not copied. You can solve several instances of the same
+ * size (same number of nodes and arcs) by modifying the input arrays and then
+ * restarting the call sequence from relax4_check_inputs (or relax4_init_phase1,
+ * if you trust your inputs).
  *
  * There can be only one relax4 problem active at a time, because it currently
  * uses global state.
  *
  * The caller is responsible for allocating (and later freeing) the arrays
  * passed to this function. The relax4_free method should be called to free the
- * internal arrays.
+ * internal arrays. If this call fails, you do not have to call relax4_free to
+ * clean up the internal arrays.
  *
- * If the call fails, you do not have to call relax4_free to clean up.
+ * @param[in] num_nodes number of nodes in the graph; strictly positive
+ *
+ * @param[in] num_arcs number of arcs (edges) in the graph; strictly positive
+ *
+ * @param[in] start_nodes index of node at the start of each arc; the first node
+ * is numbered 1.
+ *
+ * @param[in] end_nodes index of node at the end of each arc; the first node
+ * is numbered 1.
+ *
+ * @param[in] costs cost for each arc; negative costs are allowed; negative cost
+ * cycles are allowed (flows on edges involved in such a cycle are set to
+ * <tt>large</tt>); absolute values of costs must be less than <tt>large</tt>
+ * and should be less than <tt>large/10</tt> to avoid overflow (see
+ * RELAX4_DEFAULT_MAX_COST).
+ *
+ * @param[in] capacities capacity for each arc; for an uncapacitated problem,
+ * set these to a suitably large value (such as <tt>large</tt>); capacities
+ * must be in [0, <tt>large</tt>].
+ *
+ * @param[in] demands demand for each node; a node with negative demand is a
+ * surplus node; demands should balance (sum to zero), or else the problem will
+ * be infeasible.
+ *
+ * @param[in] flows flow on each arc; the solution from relax4_run is stored
+ * in this array.
+ *
+ * @param[in] large a very large integer to represent infinity; see
+ * RELAX4_LARGE_DEFAULT for more information.
  *
  * @return RELAX4_OK if allocations succeeded, or RELAX4_FAIL_OUT_OF_MEMORY if
  * any failed.
  */
 int relax4_init(integer num_nodes, integer num_arcs,
-    integer start_node[],
-    integer end_node[],
-    integer cost[],
-    integer capacity[],
-    integer demand[],
+    integer start_nodes[],
+    integer end_nodes[],
+    integer costs[],
+    integer capacities[],
+    integer demands[],
     integer flows[],
     integer large);
 
 /**
- * INITIALIZATION PHASE I
+ * Basic checks on the parameters given to relax4_init.
  *
- * IN THIS PHASE, WE REDUCE THE ARC CAPACITIES BY AS MUCH AS POSSIBLE WITHOUT
- * CHANGING THE PROBLEM.
+ * You do not have to call this method, but it is recommended (avoid segfaults).
+ *
+ * @param max_cost return RELAX4_FAIL_BAD_COST if any arc cost exceeds
+ * max_cost in absolute value; see RELAX4_DEFAULT_MAX_COST.
+ *
+ * @return RELAX4_OK if checks pass; RELAX4_FAIL_BAD_SIZE (zero arcs or nodes),
+ * RELAX4_FAIL_BAD_NODE (in start_nodes or end_nodes), RELAX4_FAIL_BAD_COST or
+ * RELAX4_FAIL_BAD_CAPACITY otherwise.
+ */
+int relax4_check_inputs(int max_cost);
+
+/**
+ * Reduce arc capacities by as much as possible without changing the problem.
  *
  * @return RELAX4_OK if successful; RELAX4_INFEASIBLE if problem was found
  * to be infeasible during arc capacity reduction.
@@ -60,11 +120,11 @@ int relax4_init(integer num_nodes, integer num_arcs,
 int relax4_init_phase_1();
 
 /**
- * INITIALIZE THE ARC FLOWS TO SATISFY COMPLEMENTARY SLACKNESS WITH THE 
- * PRICES.
+ * Initialize the arc flows to satisfy complementary slackness with the node
+ * prices.
  *
  * You must call relax4_init_phase_1 first.
- * Call this method or call relax4_auction, but do not call both.
+ * Call either this method or relax4_auction, but do not call both.
  *
  * @return RELAX4_OK if successful; RELAX4_INFEASIBLE if problem was found to be
  * infeasible.
@@ -72,13 +132,15 @@ int relax4_init_phase_1();
 int relax4_init_phase_2();
 
 /**
- * USES A VERSION OF THE AUCTION ALGORITHM FOR MIN COST NETWORK FLOW TO COMPUTE
- * A GOOD INITIAL FLOW AND PRICES FOR THE PROBLEM.
+ * Uses a version of the auction algorithm for min cost network flow to compute
+ * a good initial flow and prices for the problem.
  *
  * You must call relax4_init_phase_1 first.
- * Call this method or call relax4_init_phase_2, but do not call both.
- * You can get an approximate solution by just calling this method (and not
- * calling relax4_run).
+ * Call either this method or relax4_init_phase_2, but do not call both.
+ *
+ * You can get an approximate solution using the auction algorithm by just
+ * calling this method (and not calling relax4_run). The flows will be stored in
+ * the <tt>flows</tt> array passed to relax4_init.
  *
  * @return RELAX4_OK if successful; RELAX4_INFEASIBLE if problem was found to be
  * infeasible.
@@ -86,9 +148,17 @@ int relax4_init_phase_2();
 int relax4_auction();
 
 /**
- * Solve.
+ * The main solve routine.
+ *
+ * If the problem is feasible, the optimal flows will be stored in
+ * the <tt>flows</tt> array passed to relax4_init. Otherwise, RELAX4_INFEASIBLE
+ * is returned. See also the notes in relax4_init regarding negative cost
+ * cycles.
  *
  * You must call (exactly) one of relax4_init_phase_2 or relax4_auction first.
+ *
+ * @return RELAX4_OK if successful; RELAX4_INFEASIBLE if problem was found to be
+ * infeasible.
  */
 int relax4_run();
 
@@ -96,7 +166,9 @@ int relax4_run();
  * Check that there are no unsatisfied demands and that complementary slackness
  * conditions are satisfied.
  *
- * You must call relax4_run() first.
+ * You must call relax4_run first.
+ * You do not have to call this method; it just provides an independent check on
+ * the correctness of relax4_run.
  *
  * @return RELAX4_OK if output passes checks; otherwise one of
  * RELAX4_OUTPUT_FAIL_NONZERO_DEMAND or
