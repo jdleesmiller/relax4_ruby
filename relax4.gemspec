@@ -9,11 +9,11 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::CURRENT
   s.authors     = ["John Lees-Miller"]
   s.email       = ["jdleesmiller@gmail.com"]
-  s.homepage    = ""
+  s.homepage    = "http://relax4.rubyforge.org/"
   s.summary     = "The RELAX IV code for the Minimum Cost Network Flow Problem"
   s.description = "Ruby interface for the RELAX IV code by D.P. Bertsekas and"\
-                    " P. Tseng."
-  # s.rubyforge_project         = "rucas" # maybe ?
+                  " P. Tseng."
+  s.rubyforge_project = "relax4"
   
   s.files        = Dir.glob("lib/**/*") + %w(
 ext/extconf.rb
