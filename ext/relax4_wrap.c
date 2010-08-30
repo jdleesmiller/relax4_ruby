@@ -1788,10 +1788,10 @@ static swig_module_info swig_module = {swig_types, 4, 0, 0, 0, 0};
 
 /* -------- TYPES TABLE (END) -------- */
 
-#define SWIG_init    Init_relax4_ruby
-#define SWIG_name    "Relax4_ruby"
+#define SWIG_init    Init_relax4
+#define SWIG_name    "Relax4"
 
-static VALUE mRelax4_ruby;
+static VALUE mRelax4;
 
 #define SWIG_RUBY_THREAD_BEGIN_BLOCK
 #define SWIG_RUBY_THREAD_END_BLOCK
@@ -1921,6 +1921,22 @@ SWIG_From_int  (int value)
   return SWIG_From_long  (value);
 }
 
+
+SWIGINTERN int
+SWIG_AsVal_int (VALUE obj, int *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < INT_MIN || v > INT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = (int)(v);
+    }
+  }  
+  return res;
+}
+
 swig_class cIntegerArray;
 
 #ifdef HAVE_RB_DEFINE_ALLOC_FUNC
@@ -1973,7 +1989,7 @@ free_IntegerArray(IntegerArray *arg1) {
 
 
 /*
-  Document-method: Relax4_ruby::IntegerArray.[]
+  Document-method: Relax4::IntegerArray.[]
 
   call-seq:
     [](index) -> long
@@ -2014,7 +2030,7 @@ fail:
 
 
 /*
-  Document-method: Relax4_ruby::IntegerArray.[]=
+  Document-method: Relax4::IntegerArray.[]=
 
   call-seq:
     []=(index, value)
@@ -2107,7 +2123,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_run_relax4(int argc, VALUE *argv, VALUE self) {
+_wrap_relax4_init(int argc, VALUE *argv, VALUE self) {
   integer arg1 ;
   integer arg2 ;
   integer *arg3 ;
@@ -2143,52 +2159,168 @@ _wrap_run_relax4(int argc, VALUE *argv, VALUE self) {
   }
   ecode1 = SWIG_AsVal_long(argv[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), Ruby_Format_TypeError( "", "integer","run_relax4", 1, argv[0] ));
+    SWIG_exception_fail(SWIG_ArgError(ecode1), Ruby_Format_TypeError( "", "integer","relax4_init", 1, argv[0] ));
   } 
   arg1 = (integer)(val1);
   ecode2 = SWIG_AsVal_long(argv[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), Ruby_Format_TypeError( "", "integer","run_relax4", 2, argv[1] ));
+    SWIG_exception_fail(SWIG_ArgError(ecode2), Ruby_Format_TypeError( "", "integer","relax4_init", 2, argv[1] ));
   } 
   arg2 = (integer)(val2);
   res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), Ruby_Format_TypeError( "", "integer []","run_relax4", 3, argv[2] )); 
+    SWIG_exception_fail(SWIG_ArgError(res3), Ruby_Format_TypeError( "", "integer []","relax4_init", 3, argv[2] )); 
   } 
   arg3 = (integer *)(argp3);
   res4 = SWIG_ConvertPtr(argv[3], &argp4,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), Ruby_Format_TypeError( "", "integer []","run_relax4", 4, argv[3] )); 
+    SWIG_exception_fail(SWIG_ArgError(res4), Ruby_Format_TypeError( "", "integer []","relax4_init", 4, argv[3] )); 
   } 
   arg4 = (integer *)(argp4);
   res5 = SWIG_ConvertPtr(argv[4], &argp5,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), Ruby_Format_TypeError( "", "integer []","run_relax4", 5, argv[4] )); 
+    SWIG_exception_fail(SWIG_ArgError(res5), Ruby_Format_TypeError( "", "integer []","relax4_init", 5, argv[4] )); 
   } 
   arg5 = (integer *)(argp5);
   res6 = SWIG_ConvertPtr(argv[5], &argp6,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), Ruby_Format_TypeError( "", "integer []","run_relax4", 6, argv[5] )); 
+    SWIG_exception_fail(SWIG_ArgError(res6), Ruby_Format_TypeError( "", "integer []","relax4_init", 6, argv[5] )); 
   } 
   arg6 = (integer *)(argp6);
   res7 = SWIG_ConvertPtr(argv[6], &argp7,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), Ruby_Format_TypeError( "", "integer []","run_relax4", 7, argv[6] )); 
+    SWIG_exception_fail(SWIG_ArgError(res7), Ruby_Format_TypeError( "", "integer []","relax4_init", 7, argv[6] )); 
   } 
   arg7 = (integer *)(argp7);
   res8 = SWIG_ConvertPtr(argv[7], &argp8,SWIGTYPE_p_long, 0 |  0 );
   if (!SWIG_IsOK(res8)) {
-    SWIG_exception_fail(SWIG_ArgError(res8), Ruby_Format_TypeError( "", "integer []","run_relax4", 8, argv[7] )); 
+    SWIG_exception_fail(SWIG_ArgError(res8), Ruby_Format_TypeError( "", "integer []","relax4_init", 8, argv[7] )); 
   } 
   arg8 = (integer *)(argp8);
   ecode9 = SWIG_AsVal_long(argv[8], &val9);
   if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), Ruby_Format_TypeError( "", "integer","run_relax4", 9, argv[8] ));
+    SWIG_exception_fail(SWIG_ArgError(ecode9), Ruby_Format_TypeError( "", "integer","relax4_init", 9, argv[8] ));
   } 
   arg9 = (integer)(val9);
-  result = (int)run_relax4(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
+  result = (int)relax4_init(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
   vresult = SWIG_From_int((int)(result));
   return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_relax4_check_inputs(int argc, VALUE *argv, VALUE self) {
+  int arg1 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  int result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  ecode1 = SWIG_AsVal_int(argv[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), Ruby_Format_TypeError( "", "int","relax4_check_inputs", 1, argv[0] ));
+  } 
+  arg1 = (int)(val1);
+  result = (int)relax4_check_inputs(arg1);
+  vresult = SWIG_From_int((int)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_relax4_init_phase_1(int argc, VALUE *argv, VALUE self) {
+  int result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (int)relax4_init_phase_1();
+  vresult = SWIG_From_int((int)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_relax4_init_phase_2(int argc, VALUE *argv, VALUE self) {
+  int result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (int)relax4_init_phase_2();
+  vresult = SWIG_From_int((int)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_relax4_auction(int argc, VALUE *argv, VALUE self) {
+  int result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (int)relax4_auction();
+  vresult = SWIG_From_int((int)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_relax4_run(int argc, VALUE *argv, VALUE self) {
+  int result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (int)relax4_run();
+  vresult = SWIG_From_int((int)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_relax4_check_output(int argc, VALUE *argv, VALUE self) {
+  int result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (int)relax4_check_output();
+  vresult = SWIG_From_int((int)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_relax4_free(int argc, VALUE *argv, VALUE self) {
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  relax4_free();
+  return Qnil;
 fail:
   return Qnil;
 }
@@ -2470,11 +2602,11 @@ SWIG_PropagateClientData(void) {
 #ifdef __cplusplus
 extern "C"
 #endif
-SWIGEXPORT void Init_relax4_ruby(void) {
+SWIGEXPORT void Init_relax4(void) {
   size_t i;
   
   SWIG_InitRuntime();
-  mRelax4_ruby = rb_define_module("Relax4_ruby");
+  mRelax4 = rb_define_module("Relax4");
   
   SWIG_InitializeModule(0);
   for (i = 0; i < swig_module.size; i++) {
@@ -2483,7 +2615,7 @@ SWIGEXPORT void Init_relax4_ruby(void) {
   
   SWIG_RubyInitializeTrackings();
   
-  cIntegerArray.klass = rb_define_class_under(mRelax4_ruby, "IntegerArray", rb_cObject);
+  cIntegerArray.klass = rb_define_class_under(mRelax4, "IntegerArray", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_IntegerArray, (void *) &cIntegerArray);
   rb_define_alloc_func(cIntegerArray.klass, _wrap_IntegerArray_allocate);
   rb_define_method(cIntegerArray.klass, "initialize", _wrap_new_IntegerArray, -1);
@@ -2494,6 +2626,24 @@ SWIGEXPORT void Init_relax4_ruby(void) {
   cIntegerArray.mark = 0;
   cIntegerArray.destroy = (void (*)(void *)) free_IntegerArray;
   cIntegerArray.trackObjects = 0;
-  rb_define_module_function(mRelax4_ruby, "run_relax4", _wrap_run_relax4, -1);
+  rb_define_const(mRelax4, "RELAX4_OK", SWIG_From_int((int)(0)));
+  rb_define_const(mRelax4, "RELAX4_INFEASIBLE", SWIG_From_int((int)(1)));
+  rb_define_const(mRelax4, "RELAX4_FAIL_OUT_OF_MEMORY", SWIG_From_int((int)(2)));
+  rb_define_const(mRelax4, "RELAX4_FAIL_BAD_SIZE", SWIG_From_int((int)(3)));
+  rb_define_const(mRelax4, "RELAX4_FAIL_BAD_NODE", SWIG_From_int((int)(4)));
+  rb_define_const(mRelax4, "RELAX4_FAIL_BAD_COST", SWIG_From_int((int)(5)));
+  rb_define_const(mRelax4, "RELAX4_FAIL_BAD_CAPACITY", SWIG_From_int((int)(6)));
+  rb_define_const(mRelax4, "RELAX4_OUTPUT_FAIL_NONZERO_DEMAND", SWIG_From_int((int)(101)));
+  rb_define_const(mRelax4, "RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS", SWIG_From_int((int)(102)));
+  rb_define_const(mRelax4, "RELAX4_DEFAULT_LARGE", SWIG_From_int((int)(500000000)));
+  rb_define_const(mRelax4, "RELAX4_DEFAULT_MAX_COST", SWIG_From_int((int)((500000000/10))));
+  rb_define_module_function(mRelax4, "relax4_init", _wrap_relax4_init, -1);
+  rb_define_module_function(mRelax4, "relax4_check_inputs", _wrap_relax4_check_inputs, -1);
+  rb_define_module_function(mRelax4, "relax4_init_phase_1", _wrap_relax4_init_phase_1, -1);
+  rb_define_module_function(mRelax4, "relax4_init_phase_2", _wrap_relax4_init_phase_2, -1);
+  rb_define_module_function(mRelax4, "relax4_auction", _wrap_relax4_auction, -1);
+  rb_define_module_function(mRelax4, "relax4_run", _wrap_relax4_run, -1);
+  rb_define_module_function(mRelax4, "relax4_check_output", _wrap_relax4_check_output, -1);
+  rb_define_module_function(mRelax4, "relax4_free", _wrap_relax4_free, -1);
 }
 
