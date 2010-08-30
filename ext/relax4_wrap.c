@@ -1921,6 +1921,22 @@ SWIG_From_int  (int value)
   return SWIG_From_long  (value);
 }
 
+
+SWIGINTERN int
+SWIG_AsVal_int (VALUE obj, int *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < INT_MIN || v > INT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = (int)(v);
+    }
+  }  
+  return res;
+}
+
 swig_class cIntegerArray;
 
 #ifdef HAVE_RB_DEFINE_ALLOC_FUNC
@@ -2187,6 +2203,30 @@ _wrap_relax4_init(int argc, VALUE *argv, VALUE self) {
   } 
   arg9 = (integer)(val9);
   result = (int)relax4_init(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
+  vresult = SWIG_From_int((int)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_relax4_check_inputs(int argc, VALUE *argv, VALUE self) {
+  int arg1 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  int result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  ecode1 = SWIG_AsVal_int(argv[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), Ruby_Format_TypeError( "", "int","relax4_check_inputs", 1, argv[0] ));
+  } 
+  arg1 = (int)(val1);
+  result = (int)relax4_check_inputs(arg1);
   vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
@@ -2589,10 +2629,16 @@ SWIGEXPORT void Init_relax4(void) {
   rb_define_const(mRelax4, "RELAX4_OK", SWIG_From_int((int)(0)));
   rb_define_const(mRelax4, "RELAX4_INFEASIBLE", SWIG_From_int((int)(1)));
   rb_define_const(mRelax4, "RELAX4_FAIL_OUT_OF_MEMORY", SWIG_From_int((int)(2)));
+  rb_define_const(mRelax4, "RELAX4_FAIL_BAD_SIZE", SWIG_From_int((int)(3)));
+  rb_define_const(mRelax4, "RELAX4_FAIL_BAD_NODE", SWIG_From_int((int)(4)));
+  rb_define_const(mRelax4, "RELAX4_FAIL_BAD_COST", SWIG_From_int((int)(5)));
+  rb_define_const(mRelax4, "RELAX4_FAIL_BAD_CAPACITY", SWIG_From_int((int)(6)));
   rb_define_const(mRelax4, "RELAX4_OUTPUT_FAIL_NONZERO_DEMAND", SWIG_From_int((int)(101)));
   rb_define_const(mRelax4, "RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS", SWIG_From_int((int)(102)));
   rb_define_const(mRelax4, "RELAX4_DEFAULT_LARGE", SWIG_From_int((int)(500000000)));
+  rb_define_const(mRelax4, "RELAX4_DEFAULT_MAX_COST", SWIG_From_int((int)((500000000/10))));
   rb_define_module_function(mRelax4, "relax4_init", _wrap_relax4_init, -1);
+  rb_define_module_function(mRelax4, "relax4_check_inputs", _wrap_relax4_check_inputs, -1);
   rb_define_module_function(mRelax4, "relax4_init_phase_1", _wrap_relax4_init_phase_1, -1);
   rb_define_module_function(mRelax4, "relax4_init_phase_2", _wrap_relax4_init_phase_2, -1);
   rb_define_module_function(mRelax4, "relax4_auction", _wrap_relax4_auction, -1);
