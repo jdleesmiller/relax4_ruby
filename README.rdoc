@@ -69,21 +69,17 @@ The following packages were required to install on Ubuntu 10.04:
 * ruby, ruby-dev, rubygems, rake
 
 The bindings were generated with f2c (FORTRAN to C converter) and swig
-(www.swig.org), but you don't need to install f2c or SWIG to build the gem.
+(www.swig.org), but you don't need f2c or SWIG to build the gem.
 
 == INSTALL
 
   gem build relax4.gemspec
   gem install relax4-<version>.gem
 
-I will push this out properly when it's a bit more complete.
-
 == TODO
 
-* there are some hard-coded parameters in the code (e.g. numbers of passes in
-initialization routines) that could be exposed
-* all problem state is global (translation from FORTRAN), so you can only create
-one instance at a time; the state could go into a struct.
+* there are some hard-coded parameters that could be exposed
+* problem state is global (cf. FORTRAN), so can have only one instance at a time
 
 == LICENSE
 
