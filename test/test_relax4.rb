@@ -260,4 +260,84 @@ ARCS
     flows = Relax4.solve(prob.merge(:capacities=>[5000]*9, :auction_init=>true))
     assert_equal -40000, flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
   end
+
+  def test_bad_args_1
+    # Empty problem is invalid.
+    assert_raise ArgumentError do
+      Relax4.solve(:start_nodes => [], 
+                   :end_nodes   => [],
+                   :costs       => [],
+                   :demands     => [])
+    end
+
+    # Mismatch in array lengths.
+    assert_raise ArgumentError do
+      Relax4.solve(:start_nodes => [1,2], 
+                   :end_nodes   => [2,1],
+                   :costs       => [1,1,1], # too many
+                   :demands     => [-1,1])
+    end
+
+    # Node out of range.
+    assert_raise ArgumentError do
+      Relax4.solve(:start_nodes => [1,3], # bad node: 3
+                   :end_nodes   => [2,1],
+                   :costs       => [1,1],
+                   :demands     => [-1,1])
+    end
+    assert_raise ArgumentError do
+      Relax4.solve(:start_nodes => [1,2], 
+                   :end_nodes   => [2,3], # bad node: 3 
+                   :costs       => [1,1],
+                   :demands     => [-1,1])
+    end
+
+    # Cost out of range.
+    assert_raise ArgumentError do
+      Relax4.solve(:start_nodes => [1,2],
+                   :end_nodes   => [2,1],
+                   :costs       => [99,101], # bad cost: 100
+                   :demands     => [-1,1],
+                   :large       => 1000,
+                   :max_cost    => 100)
+    end
+
+    # Capacity out of range.
+    assert_raise ArgumentError do
+      Relax4.solve(:start_nodes => [1,2],
+                   :end_nodes   => [2,1],
+                   :costs       => [99,100],
+                   :capacities  => [1000,1001], # bad capacity: 1001
+                   :demands     => [-1,1],
+                   :large       => 1000,
+                   :max_cost    => 100)
+    end
+  end
+
+  def test_infeasible
+    #
+    # A problem for which the phase 1 init doesn't detect infeasibility.
+    #
+    #         (1)             (6)    all edges have capacity 1
+    #            \           /       1 unit surplus for 1, 2
+    #             \         /        1 unit deficit for 6, 7
+    #             (3)-->--(4)        link (3, 4) is the bottleneck
+    #             /         \
+    #            /           \
+    #         (2)             (7)
+    #
+    prob = {
+      :demands     => [-1, -1, 0, 0, 1, 1],
+      :start_nodes => [  1,  2,  3,  4, 4],
+      :end_nodes   => [  3,  3,  4,  5, 6],
+      :costs       => [  1,  1,  1,  1, 1],
+      :capacities  => [  1,  1,  1,  1, 1]}
+    
+    assert_raise Relax4::InfeasibleError do
+      Relax4.solve(prob)
+    end
+    assert_raise Relax4::InfeasibleError do
+      Relax4.solve(prob.merge(:auction_init => true))
+    end
+  end
 end
