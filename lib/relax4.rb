@@ -78,9 +78,9 @@ module Relax4
                      IntegerArray.from_array(capacities),
                      IntegerArray.from_array(demands),
                      flows_ia, large)
-    when RELAX4_OK:
+    when RELAX4_OK then
       # continue
-    when RELAX4_FAIL_OUT_OF_MEMORY:
+    when RELAX4_FAIL_OUT_OF_MEMORY then
       raise "could not allocate enough memory in relax4_init"
     else
       raise "relax4_init_phase_1 failed with unrecognized code"
@@ -88,24 +88,24 @@ module Relax4
 
     begin
       case relax4_check_inputs(max_cost)
-      when RELAX4_OK:
+      when RELAX4_OK then
         # continue
-      when RELAX4_FAIL_BAD_SIZE:
+      when RELAX4_FAIL_BAD_SIZE then
         raise ArgumentError.new('problem has zero nodes or zero arcs')
-      when RELAX4_FAIL_BAD_NODE:
+      when RELAX4_FAIL_BAD_NODE then
         raise ArgumentError.new('start_nodes or end_nodes has a bad index')
-      when RELAX4_FAIL_BAD_COST:
+      when RELAX4_FAIL_BAD_COST then
         raise ArgumentError.new("a cost exceeds the maximum (#{max_cost})")
-      when RELAX4_FAIL_BAD_CAPACITY:
+      when RELAX4_FAIL_BAD_CAPACITY then
         raise ArgumentError.new("a capacity exceeds the maximum (#{large})")
       else
         raise "relax4_check_inputs failed with unrecognized code"
       end
 
       case relax4_init_phase_1()
-      when RELAX4_OK:
+      when RELAX4_OK then
         # continue
-      when RELAX4_INFEASIBLE:
+      when RELAX4_INFEASIBLE then
         raise InfeasibleError.new("infeasibility detected in phase 1 init")
       else
         raise "relax4_init_phase_1 failed with unrecognized code"
@@ -113,18 +113,18 @@ module Relax4
 
       if args[:auction_init]
         case relax4_auction()
-        when RELAX4_OK:
+        when RELAX4_OK then
           # continue
-        when RELAX4_INFEASIBLE:
+        when RELAX4_INFEASIBLE then
           raise InfeasibleError.new("infeasibility detected in auction")
         else
           raise "relax4_auction failed with unrecognized code"
         end
       else
         case relax4_init_phase_2()
-        when RELAX4_OK:
+        when RELAX4_OK then
           # continue
-        when RELAX4_INFEASIBLE:
+        when RELAX4_INFEASIBLE then
           raise InfeasibleError.new("infeasibility detected in phase 2 init")
         else
           raise "relax4_init_phase_2 failed with unrecognized code"
@@ -132,20 +132,20 @@ module Relax4
       end
 
       case relax4_run()
-      when RELAX4_OK:
+      when RELAX4_OK then
         # continue
-      when RELAX4_INFEASIBLE:
+      when RELAX4_INFEASIBLE then
         raise InfeasibleError.new("infeasibility detected in relax4_run")
       else
         raise "relax4_run failed with unrecognized code"
       end
 
       case relax4_check_output()
-      when RELAX4_OK:
+      when RELAX4_OK then
         # continue
-      when RELAX4_OUTPUT_FAIL_NONZERO_DEMAND:
+      when RELAX4_OUTPUT_FAIL_NONZERO_DEMAND then
         raise "relax4 failed: output contains nonzero demands"
-      when RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS:
+      when RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS then
         raise "relax4 failed: output does not satisfy complementary slackness"
       else
         raise "relax4_check_output failed with unrecognized code"
