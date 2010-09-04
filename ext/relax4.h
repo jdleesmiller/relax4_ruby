@@ -12,6 +12,11 @@
 #define RELAX4_OUTPUT_FAIL_NONZERO_DEMAND 101
 #define RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS 102
 
+// Use default word for ints; must be at least 32 bits.
+#ifndef RELAX4_INT
+#define RELAX4_INT int
+#endif
+
 /**
  * The default value used for the <tt>large</tt> parameter. It is set to 500
  * million, which is the value in the original relax4 source.
@@ -88,14 +93,14 @@
  * @return RELAX4_OK if allocations succeeded, or RELAX4_FAIL_OUT_OF_MEMORY if
  * any failed.
  */
-int relax4_init(integer num_nodes, integer num_arcs,
-    integer start_nodes[],
-    integer end_nodes[],
-    integer costs[],
-    integer capacities[],
-    integer demands[],
-    integer flows[],
-    integer large);
+int relax4_init(RELAX4_INT num_nodes, RELAX4_INT num_arcs,
+    RELAX4_INT start_nodes[],
+    RELAX4_INT end_nodes[],
+    RELAX4_INT costs[],
+    RELAX4_INT capacities[],
+    RELAX4_INT demands[],
+    RELAX4_INT flows[],
+    RELAX4_INT large);
 
 /**
  * Basic checks on the parameters given to relax4_init.
