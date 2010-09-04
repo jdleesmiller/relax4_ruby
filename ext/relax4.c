@@ -11,7 +11,6 @@
 #include "stdlib.h"
 /*#include "stdio.h" */ /* just for tracing*/
 #include "assert.h"
-/*#include "relax4_f2c.h"*/
 #include "relax4.h"
 
 /* 
