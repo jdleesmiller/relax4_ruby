@@ -12,7 +12,7 @@
 #define RELAX4_OUTPUT_FAIL_NONZERO_DEMAND 101
 #define RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS 102
 
-// Use default word for ints; must be at least 32 bits.
+/* Use default word for ints; must be at least 32 bits. */
 #ifndef RELAX4_INT
 #define RELAX4_INT int
 #endif
