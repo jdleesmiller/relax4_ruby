@@ -98,6 +98,7 @@ and run
 
 * there are some hard-coded parameters that could be exposed
 * problem state is global (cf. FORTRAN), so can have only one instance at a time
+* add some wrappers for transportation and assignment problems
 
 == LICENSE
 
