@@ -2631,6 +2631,7 @@ SWIGEXPORT void Init_relax4(void) {
   rb_define_const(mRelax4, "RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS", SWIG_From_int((int)(102)));
   rb_define_const(mRelax4, "RELAX4_DEFAULT_LARGE", SWIG_From_int((int)(500000000)));
   rb_define_const(mRelax4, "RELAX4_DEFAULT_MAX_COST", SWIG_From_int((int)((500000000/10))));
+  rb_define_const(mRelax4, "RELAX4_UNCAPACITATED", SWIG_From_int((int)((500000000/10))));
   rb_define_module_function(mRelax4, "relax4_init", _wrap_relax4_init, -1);
   rb_define_module_function(mRelax4, "relax4_check_inputs", _wrap_relax4_check_inputs, -1);
   rb_define_module_function(mRelax4, "relax4_init_phase_1", _wrap_relax4_init_phase_1, -1);
