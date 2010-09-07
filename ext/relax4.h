@@ -45,6 +45,17 @@
 #define RELAX4_DEFAULT_MAX_COST (RELAX4_DEFAULT_LARGE/10)
 
 /**
+ * Suggested capacity to use for arcs in uncapacitated problems.
+ *
+ * The guidance in the original relax4 source was that LARGE should be used, but
+ * this has been known to cause overflow problems. Moreover, when relax4 read
+ * its input, it only read the first eight digits of each number, so it read
+ * 500 million (nine decimal digits) as 50 million; so, this is a reasonable
+ * value to use, if you don't have a tighter upper bound.
+ */
+#define RELAX4_UNCAPACITATED (RELAX4_DEFAULT_LARGE/10)
+
+/**
  * Set global state and allocate memory for internal arrays.
  *
  * The input arrays are not copied. You can solve several instances of the same
@@ -77,8 +88,8 @@
  * RELAX4_DEFAULT_MAX_COST).
  *
  * @param[in] capacities capacity for each arc; for an uncapacitated problem,
- * set these to a suitably large value (such as <tt>large</tt>); capacities
- * must be in [0, <tt>large</tt>].
+ * set these to a suitably large value (such as +RELAX4_UNCAPACITATED+);
+ * capacities must be in [0, <tt>large</tt>].
  *
  * @param[in] demands demand for each node; a node with negative demand is a
  * surplus node; demands should balance (sum to zero), or else the problem will

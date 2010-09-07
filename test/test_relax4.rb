@@ -27,47 +27,58 @@ class TestRelax4< Test::Unit::TestCase
     soln =            [ 2, 2, 1, 1, 3]
     flows = Relax4.solve(prob)
     assert_equal soln, flows
-    assert_equal 27, flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
+    assert_equal 27, problem_cost(prob, flows)
 
     assert_equal soln, Relax4.solve(prob.merge(:auction_init => true))
   end
 
   # Load problem from relax4_input format.
-  def problem_from_relax4_inp inp
-    inp_lines = inp.lines.to_a
-    raise "empty input" if inp_lines.empty?
-
-    head = inp_lines.first.scan(/^\s*(\d+)\s+(\d+)\s*$/)[0] or
-      raise "bad first line: expected number of nodes and number of arcs"
-    num_nodes, num_arcs = head.map{|x| x.to_i}
-
-    arcs = inp_lines[1..num_arcs].map{|l| l.scan(
-      /^\s*(\d+)\s+(\d+)\s+(-?\d+)\s+(\d+)\s*$/)[0] or raise "bad arc: #{l}"}
-
-    demands = inp_lines[1+num_arcs..num_arcs+num_nodes].map{|l| -l.to_i}
-
-    {
-      :demands     => demands,
-      :start_nodes => arcs.map{|x| x[0].to_i},
-      :end_nodes   => arcs.map{|x| x[1].to_i},
-      :costs       => arcs.map{|x| x[2].to_i},
-      :capacities  => arcs.map{|x| x[3].to_i}
+  # Note that the input format has node surpluses rather than demands.
+  # No error checking.
+  def problem_from_relax4_inp file_name
+    require 'scanf'
+    File.open(file_name) {|f|
+      num_nodes, num_arcs = f.scanf('%d %d')
+      arcs = num_arcs.times.collect {f.scanf('%d %d %d %d')}
+      demands = num_nodes.times.collect {-f.scanf('%d').first}
+      {
+        :demands     => demands,
+        :start_nodes => arcs.map{|x| x[0].to_i},
+        :end_nodes   => arcs.map{|x| x[1].to_i},
+        :costs       => arcs.map{|x| x[2].to_i},
+        :capacities  => arcs.map{|x| x[3].to_i}
+      }
     }
   end
 
+  # Compute cost of flows.
+  def problem_cost prob, flows
+    flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
+  end
+
   def test_solve_3
-    prob = problem_from_relax4_inp File.read('test/RELAX4.INP')
+    prob = problem_from_relax4_inp 'test/RELAX4.INP'
 
     flows = Relax4.solve(prob)
-    assert_equal -26464, flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
+    assert_equal -26464, problem_cost(prob, flows)
 
     flows = Relax4.solve(prob.merge(:auction_init => true))
-    assert_equal -26464, flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
+    assert_equal -26464, problem_cost(prob, flows)
   end
 
   def test_solve_4
-    prob = problem_from_relax4_inp File.read('test/test_solve_4.inp')
+    # This problem appears to fail due to overflow. Its arc capacities are set
+    # to 500 million (equal to the default LARGE constant), and this causes the
+    # solver to incorrectly report that the problem is infeasible. Reducing the
+    # capacities by a factor of 10 makes it work OK.
+    #
+    # Note that giving this file to the original application works, because it
+    # only reads the first 8 digits of any input number (format I8) -- i.e. it
+    # sets the capacities to 50M not 500M. 
+    prob = problem_from_relax4_inp 'test/test_solve_4.inp'
+    prob[:capacities].map! {|x| [x, Relax4::RELAX4_UNCAPACITATED].min}
     flows = Relax4.solve(prob)
+    assert_equal 1381, problem_cost(prob, flows)
   end
 
   def test_solve_lemon_1
@@ -126,11 +137,11 @@ ARCS
 
     # l1, s1
     flows = Relax4.solve(prob.merge(:demands => demands[0]))
-    assert_equal 5240, flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
+    assert_equal 5240, problem_cost(prob, flows)
 
     # l1, s2
     flows = Relax4.solve(prob.merge(:demands => demands[1]))
-    assert_equal 7620, flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
+    assert_equal 7620, problem_cost(prob, flows)
 
     # l1, s5 is infeasible because s5 doesn't have balanced supply and demand
     assert_raise Relax4::InfeasibleError do
@@ -145,11 +156,11 @@ ARCS
 
     # l1, s1
     flows = Relax4.solve(prob_unit.merge(:demands => demands[0]))
-    assert_equal 74, flows.zip(prob_unit[:costs]).map{|f,c|f*c}.inject(:+)
+    assert_equal 74, problem_cost(prob_unit, flows)
 
     # l1, s3
     flows = Relax4.solve(prob_unit.merge(:demands => demands[2]))
-    assert_equal 0, flows.zip(prob_unit[:costs]).map{|f,c|f*c}.inject(:+)
+    assert_equal 0, problem_cost(prob_unit, flows)
   end
 
   def test_solve_lemon_2
@@ -171,11 +182,11 @@ ARCS
 
     # If we put capacity bounds on, we get less flow around the -ve cost cycle.
     flows = Relax4.solve(prob.merge(:capacities=>[5000]*9))
-    assert_equal -40000, flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
+    assert_equal -40000, problem_cost(prob, flows)
 
     # If we put capacity bounds on, we get less flow around the -ve cost cycle.
     flows = Relax4.solve(prob.merge(:capacities=>[5000]*9, :auction_init=>true))
-    assert_equal -40000, flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
+    assert_equal -40000, problem_cost(prob, flows)
   end
 
   def test_bad_args_1
