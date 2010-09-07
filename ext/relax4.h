@@ -12,6 +12,11 @@
 #define RELAX4_OUTPUT_FAIL_NONZERO_DEMAND 101
 #define RELAX4_OUTPUT_FAIL_COMPLEMENTARY_SLACKNESS 102
 
+/* Just use int by default; must have at least 32 bits. */
+#ifndef RELAX4_INT
+#define RELAX4_INT int
+#endif
+
 /**
  * The default value used for the <tt>large</tt> parameter. It is set to 500
  * million, which is the value in the original relax4 source.
@@ -38,6 +43,17 @@
  * This can be enforced by the relax4_check_inputs function.
  */
 #define RELAX4_DEFAULT_MAX_COST (RELAX4_DEFAULT_LARGE/10)
+
+/**
+ * Suggested capacity to use for arcs in uncapacitated problems.
+ *
+ * The guidance in the original relax4 source was that LARGE should be used, but
+ * this has been known to cause overflow problems. Moreover, when relax4 read
+ * its input, it only read the first eight digits of each number, so it read
+ * 500 million (nine decimal digits) as 50 million; so, this is a reasonable
+ * value to use, if you don't have a tighter upper bound.
+ */
+#define RELAX4_UNCAPACITATED (RELAX4_DEFAULT_LARGE/10)
 
 /**
  * Set global state and allocate memory for internal arrays.
@@ -72,8 +88,8 @@
  * RELAX4_DEFAULT_MAX_COST).
  *
  * @param[in] capacities capacity for each arc; for an uncapacitated problem,
- * set these to a suitably large value (such as <tt>large</tt>); capacities
- * must be in [0, <tt>large</tt>].
+ * set these to a suitably large value (such as +RELAX4_UNCAPACITATED+);
+ * capacities must be in [0, <tt>large</tt>].
  *
  * @param[in] demands demand for each node; a node with negative demand is a
  * surplus node; demands should balance (sum to zero), or else the problem will
@@ -88,14 +104,14 @@
  * @return RELAX4_OK if allocations succeeded, or RELAX4_FAIL_OUT_OF_MEMORY if
  * any failed.
  */
-int relax4_init(integer num_nodes, integer num_arcs,
-    integer start_nodes[],
-    integer end_nodes[],
-    integer costs[],
-    integer capacities[],
-    integer demands[],
-    integer flows[],
-    integer large);
+int relax4_init(RELAX4_INT num_nodes, RELAX4_INT num_arcs,
+    RELAX4_INT start_nodes[],
+    RELAX4_INT end_nodes[],
+    RELAX4_INT costs[],
+    RELAX4_INT capacities[],
+    RELAX4_INT demands[],
+    RELAX4_INT flows[],
+    RELAX4_INT large);
 
 /**
  * Basic checks on the parameters given to relax4_init.

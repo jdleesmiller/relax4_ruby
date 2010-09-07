@@ -11,47 +11,66 @@
 #include "stdlib.h"
 /*#include "stdio.h" */ /* just for tracing*/
 #include "assert.h"
-#include "relax4_f2c.h"
 #include "relax4.h"
 
-/* Common Block Declarations */
+/* 
+ * The following are the required parts from f2c.h -- the Standard Fortran to C
+ * header file. They're included here to avoid having a dependency on f2c,
+ * because we really just need a few defines.
+ *
+ * barf  [ba:rf]  2.  "He suggested using FORTRAN, and everybody barfed."
+ *   - From The Shogakukan DICTIONARY OF NEW ENGLISH (Second edition)
+ *
+ * (yes, the quotation above is a required part of f2c.h)
+ */
+
+typedef char logical1;
+#define TRUE_ (1)
+#define FALSE_ (0)
+#define min(a,b) ((a) <= (b) ? (a) : (b))
+
+/* 
+ * Begin translated RELAX4 code...
+ *
+ * Common Block Declarations
+ */
 
 struct {
-  integer n, na, large;
+  RELAX4_INT n, na, large;
 } input_;
 
 #define input_1 input_
 
 struct {
-  integer *startn;
+  RELAX4_INT *startn;
 } arrays_;
 
 #define arrays_1 arrays_
 
 struct {
-  integer *endn;
+  RELAX4_INT *endn;
 } arraye_;
 
 #define arraye_1 arraye_
 
 struct {
-  integer *c__;
+  RELAX4_INT *c__;
 } arrayc_;
 
 #define arrayc_1 arrayc_
 
 struct {
-  integer *u;
+  RELAX4_INT *u;
 } arrayu_;
 
 #define arrayu_1 arrayu_
 
 union {
   struct {
-    integer *b;
+    RELAX4_INT *b;
   } _1;
   struct {
-    integer *dfct;
+    RELAX4_INT *dfct;
   } _2;
 } arrayb_;
 
@@ -59,35 +78,35 @@ union {
 #define arrayb_2 (arrayb_._2)
 
 struct {
-  integer *x;
+  RELAX4_INT *x;
 } arrayx_;
 
 #define arrayx_1 arrayx_
 
 struct {
-  integer *rc;
+  RELAX4_INT *rc;
 } arrayrc_;
 
 #define arrayrc_1 arrayrc_
 
 struct {
-  integer nmultinode, iter, num_augm__, num_ascnt__, nsp;
+  RELAX4_INT nmultinode, iter, num_augm__, num_ascnt__, nsp;
 } output_;
 
 #define output_1 output_
 
 union {
   struct {
-    integer *i1;
+    RELAX4_INT *i1;
   } _1;
   struct {
-    integer *tempin;
+    RELAX4_INT *tempin;
   } _2;
   struct {
-    integer *label;
+    RELAX4_INT *label;
   } _3;
   struct {
-    integer *p;
+    RELAX4_INT *p;
   } _4;
 } blk1_;
 
@@ -98,16 +117,16 @@ union {
 
 union {
   struct {
-    integer *i2;
+    RELAX4_INT *i2;
   } _1;
   struct {
-    integer *tempou;
+    RELAX4_INT *tempou;
   } _2;
   struct {
-    integer *prdcsr;
+    RELAX4_INT *prdcsr;
   } _3;
   struct {
-    integer *price;
+    RELAX4_INT *price;
   } _4;
 } blk2_;
 
@@ -118,10 +137,10 @@ union {
 
 union {
   struct {
-    integer *i3;
+    RELAX4_INT *i3;
   } _1;
   struct {
-    integer *fou;
+    RELAX4_INT *fou;
   } _2;
 } blk3_;
 
@@ -130,10 +149,10 @@ union {
 
 union {
   struct {
-    integer *i4;
+    RELAX4_INT *i4;
   } _1;
   struct {
-    integer *nxtou;
+    RELAX4_INT *nxtou;
   } _2;
 } blk4_;
 
@@ -142,10 +161,10 @@ union {
 
 union {
   struct {
-    integer *i5;
+    RELAX4_INT *i5;
   } _1;
   struct {
-    integer *fin;
+    RELAX4_INT *fin;
   } _2;
 } blk5_;
 
@@ -154,10 +173,10 @@ union {
 
 union {
   struct {
-    integer *i6;
+    RELAX4_INT *i6;
   } _1;
   struct {
-    integer *nxtin;
+    RELAX4_INT *nxtin;
   } _2;
 } blk6_;
 
@@ -166,10 +185,10 @@ union {
 
 union {
   struct {
-    integer *i7;
+    RELAX4_INT *i7;
   } _1;
   struct {
-    integer *save;
+    RELAX4_INT *save;
   } _2;
 } blk7_;
 
@@ -196,10 +215,10 @@ union {
 
 union {
   struct {
-    integer *tfstou; /* AKA ddpos */
+    RELAX4_INT *tfstou; /* AKA ddpos */
   } _1;
   struct {
-    integer *fpushf;
+    RELAX4_INT *fpushf;
   } _2;
 } blk10_;
 
@@ -208,10 +227,10 @@ union {
 
 union {
   struct {
-    integer *tnxtou;
+    RELAX4_INT *tnxtou;
   } _1;
   struct {
-    integer *nxtpushf;
+    RELAX4_INT *nxtpushf;
   } _2;
 } blk11_;
 
@@ -220,10 +239,10 @@ union {
 
 union {
   struct {
-    integer *tfstin; /* AKA ddneg */
+    RELAX4_INT *tfstin; /* AKA ddneg */
   } _1;
   struct {
-    integer *fpushb;
+    RELAX4_INT *fpushb;
   } _2;
 } blk12_;
 
@@ -232,10 +251,10 @@ union {
 
 union {
   struct {
-    integer *tnxtin;
+    RELAX4_INT *tnxtin;
   } _1;
   struct {
-    integer *nxtpushb;
+    RELAX4_INT *nxtpushb;
   } _2;
 } blk13_;
 
@@ -244,10 +263,10 @@ union {
 
 union {
   struct {
-    integer *i14;
+    RELAX4_INT *i14;
   } _1;
   struct {
-    integer *nxtqueue;
+    RELAX4_INT *nxtqueue;
   } _2;
 } blk14_;
 
@@ -256,10 +275,10 @@ union {
 
 union {
   struct {
-    integer *i15;
+    RELAX4_INT *i15;
   } _1;
   struct {
-    integer *extend_arc__;
+    RELAX4_INT *extend_arc__;
   } _2;
 } blk15_;
 
@@ -268,10 +287,10 @@ union {
 
 union {
   struct {
-    integer *i16;
+    RELAX4_INT *i16;
   } _1;
   struct {
-    integer *sb_level__;
+    RELAX4_INT *sb_level__;
   } _2;
 } blk16_;
 
@@ -280,10 +299,10 @@ union {
 
 union {
   struct {
-    integer *i17;
+    RELAX4_INT *i17;
   } _1;
   struct {
-    integer *sb_arc__;
+    RELAX4_INT *sb_arc__;
   } _2;
 } blk17_;
 
@@ -291,7 +310,7 @@ union {
 #define blk17_2 (blk17_._2)
 
 struct {
-  integer crash;
+  RELAX4_INT crash;
 } cr_;
 
 #define cr_1 cr_
@@ -299,10 +318,10 @@ struct {
 /* Subroutine */ int inidat_(void)
 {
   /* System generated locals */
-  integer i__1;
+  RELAX4_INT i__1;
 
   /* Local variables */
-  static integer i__, i1, i2;
+  static RELAX4_INT i__, i1, i2;
 
 
   /* --------------------------------------------------------------- */
@@ -387,8 +406,8 @@ struct {
 */
 int relax4_init_phase_1(void) {
 
-  integer i__1, i__2;
-  integer node, arc, node_def__, maxcap, scapou, scapin, capout, capin;
+  RELAX4_INT i__1, i__2;
+  RELAX4_INT node, arc, node_def__, maxcap, scapou, scapin, capout, capin;
 
   /* CONSTRUCT LINKED LISTS FOR THE PROBLEM */
   inidat_();
@@ -478,8 +497,8 @@ L10:
 /* ALSO COMPUTE THE DIRECTIONAL DERIVATIVES FOR EACH COORDINATE */
 /* AND COMPUTE THE ACTUAL DEFICITS. */
 int relax4_init_phase_2(void) {
-  integer i__1, i__2;
-  integer numpasses, node, arc, t, t1, t2, passes, delprc, trc, nxtbrk; 
+  RELAX4_INT i__1, i__2;
+  RELAX4_INT numpasses, node, arc, t, t1, t2, passes, delprc, trc, nxtbrk; 
 
   i__1 = input_1.na;
   for (arc = 1; arc <= i__1; ++arc) {
@@ -808,31 +827,31 @@ L40:
 /* Subroutine */ int relax4_(void)
 {
   /* System generated locals */
-  integer i__1, i__2, i__3;
+  RELAX4_INT i__1, i__2, i__3;
 
   /* Local variables */
-  static integer prevnode, i__, j, t1, t2, lastqueue, 
+  static RELAX4_INT prevnode, i__, j, t1, t2, lastqueue, 
                  numnz_new__, ib, nb, dp, dm, dx, tp, ts, num_passes__, 
                  arc;
-  static integer narc, node, delx;
+  static RELAX4_INT narc, node, delx;
   static logical1 quit;
-  static integer node2;
-  static integer indef;
-  static integer nscan;
+  static RELAX4_INT node2;
+  static RELAX4_INT indef;
+  static RELAX4_INT nscan;
   static logical1 posit;
-  static integer numnz;
-  extern /* Subroutine */ int ascnt1_(integer *, integer *, integer *, 
-      logical1 *, logical1 *, integer *, integer *, integer *), ascnt2_(
-        integer *, integer *, integer *, logical1 *, logical1 *, integer *
-        , integer *, integer *);
+  static RELAX4_INT numnz;
+  extern /* Subroutine */ int ascnt1_(RELAX4_INT *, RELAX4_INT *, RELAX4_INT *, 
+      logical1 *, logical1 *, RELAX4_INT *, RELAX4_INT *, RELAX4_INT *), ascnt2_(
+        RELAX4_INT *, RELAX4_INT *, RELAX4_INT *, logical1 *, logical1 *, RELAX4_INT *
+        , RELAX4_INT *, RELAX4_INT *);
   static logical1 feasbl;
-  static integer nlabel, defcit, delprc, augnod, tmparc, 
+  static RELAX4_INT nlabel, defcit, delprc, augnod, tmparc, 
                  rdcost, nxtarc;
   static logical1 switch__;
-  static integer prvarc;
+  static RELAX4_INT prvarc;
   static logical1 pchange;
-  static integer naugnod;
-  static integer nxtnode;
+  static RELAX4_INT naugnod;
+  static RELAX4_INT nxtnode;
 
   /* --------------------------------------------------------------- */
 
@@ -2147,12 +2166,10 @@ L4400:
 /* Subroutine */ int auction_(void)
 {
   /* System generated locals */
-  integer i__1;
-
-  /* Subroutine */ int s_stop(char *, ftnlen);
+  RELAX4_INT i__1;
 
   /* Local variables */
-  static integer seclevel, red_cost__, bstlevel, prevnode, i__, new_level__,
+  static RELAX4_INT seclevel, red_cost__, bstlevel, prevnode, i__, new_level__,
                  prevlevel, lastqueue, num_passes__, arc, end, nas, prd, eps, 
                  thresh_dfct__, node, pend, naug, incr, last, pass, term, flow, 
                  root, resid, pterm, start, secarc, factor, extarc, rdcost, nolist,
@@ -2999,15 +3016,15 @@ L3000:
 
 
 
-/* Subroutine */ int ascnt1_(integer *dm, integer *delx, integer *nlabel, 
-    logical1 *feasbl, logical1 *switch__, integer *nscan, integer *
-    curnode, integer *prevnode)
+/* Subroutine */ int ascnt1_(RELAX4_INT *dm, RELAX4_INT *delx, RELAX4_INT *nlabel, 
+    logical1 *feasbl, logical1 *switch__, RELAX4_INT *nscan, RELAX4_INT *
+    curnode, RELAX4_INT *prevnode)
 {
   /* System generated locals */
-  integer i__1;
+  RELAX4_INT i__1;
 
   /* Local variables */
-  static integer i__, j, t1, t2, t3, nb, arc, dlx, node, node2, nsave, 
+  static RELAX4_INT i__, j, t1, t2, t3, nb, arc, dlx, node, node2, nsave, 
                  delprc, rdcost;
 
 
@@ -3396,15 +3413,15 @@ L4:
 
 
 
-/* Subroutine */ int ascnt2_(integer *dm, integer *delx, integer *nlabel, 
-    logical1 *feasbl, logical1 *switch__, integer *nscan, integer *
-    curnode, integer *prevnode)
+/* Subroutine */ int ascnt2_(RELAX4_INT *dm, RELAX4_INT *delx, RELAX4_INT *nlabel, 
+    logical1 *feasbl, logical1 *switch__, RELAX4_INT *nscan, RELAX4_INT *
+    curnode, RELAX4_INT *prevnode)
 {
   /* System generated locals */
-  integer i__1;
+  RELAX4_INT i__1;
 
   /* Local variables */
-  static integer i__, j, t1, t2, t3, nb, arc, dlx, node, node2, nsave, 
+  static RELAX4_INT i__, j, t1, t2, t3, nb, arc, dlx, node, node2, nsave, 
                  delprc, rdcost;
 
 
@@ -3693,9 +3710,9 @@ L4:
   return 0;
 } /* ascnt2_ */
 
-/* Subroutine */ int addtr_(integer *arc)
+/* Subroutine */ int addtr_(RELAX4_INT *arc)
 {
-  static integer arc1, node;
+  static RELAX4_INT arc1, node;
 
 
   /* --------------------------------------------------------------- */
@@ -3738,14 +3755,14 @@ L30:
   return 0;
 } /* addtr_ */
 
-int relax4_init(integer num_nodes, integer num_arcs,
-    integer start_nodes[],
-    integer end_nodes[],
-    integer costs[],
-    integer capacities[],
-    integer demands[],
-    integer flows[],
-    integer large)
+int relax4_init(RELAX4_INT num_nodes, RELAX4_INT num_arcs,
+    RELAX4_INT start_nodes[],
+    RELAX4_INT end_nodes[],
+    RELAX4_INT costs[],
+    RELAX4_INT capacities[],
+    RELAX4_INT demands[],
+    RELAX4_INT flows[],
+    RELAX4_INT large)
 {
   /* Set input/output pointers. */
   input_1.n = num_nodes;
@@ -3781,24 +3798,24 @@ int relax4_init(integer num_nodes, integer num_arcs,
   blk16_1.i16 = NULL;
   blk17_1.i17 = NULL;
 
-  arrayrc_1.rc   = malloc(num_arcs*sizeof(integer));
-  blk1_1.i1      = malloc(num_nodes*sizeof(integer));
-  blk2_1.i2      = malloc(num_nodes*sizeof(integer));
-  blk3_1.i3      = malloc(num_nodes*sizeof(integer));
-  blk4_1.i4      = malloc(num_arcs*sizeof(integer));
-  blk5_1.i5      = malloc(num_nodes*sizeof(integer));
-  blk6_1.i6      = malloc(num_arcs*sizeof(integer));
-  blk7_1.i7      = malloc(num_arcs*sizeof(integer));
+  arrayrc_1.rc   = malloc(num_arcs*sizeof(RELAX4_INT));
+  blk1_1.i1      = malloc(num_nodes*sizeof(RELAX4_INT));
+  blk2_1.i2      = malloc(num_nodes*sizeof(RELAX4_INT));
+  blk3_1.i3      = malloc(num_nodes*sizeof(RELAX4_INT));
+  blk4_1.i4      = malloc(num_arcs*sizeof(RELAX4_INT));
+  blk5_1.i5      = malloc(num_nodes*sizeof(RELAX4_INT));
+  blk6_1.i6      = malloc(num_arcs*sizeof(RELAX4_INT));
+  blk7_1.i7      = malloc(num_arcs*sizeof(RELAX4_INT));
   blk8_1.scan    = malloc(num_nodes*sizeof(logical1));
   blk9_1.mark    = malloc(num_nodes*sizeof(logical1));
-  blk10_1.tfstou = malloc(num_nodes*sizeof(integer));
-  blk11_1.tnxtou = malloc(num_arcs*sizeof(integer));
-  blk12_1.tfstin = malloc(num_nodes*sizeof(integer));
-  blk13_1.tnxtin = malloc(num_arcs*sizeof(integer));
-  blk14_1.i14    = malloc(num_nodes*sizeof(integer));
-  blk15_1.i15    = malloc(num_nodes*sizeof(integer));
-  blk16_1.i16    = malloc(num_nodes*sizeof(integer));
-  blk17_1.i17    = malloc(num_nodes*sizeof(integer));
+  blk10_1.tfstou = malloc(num_nodes*sizeof(RELAX4_INT));
+  blk11_1.tnxtou = malloc(num_arcs*sizeof(RELAX4_INT));
+  blk12_1.tfstin = malloc(num_nodes*sizeof(RELAX4_INT));
+  blk13_1.tnxtin = malloc(num_arcs*sizeof(RELAX4_INT));
+  blk14_1.i14    = malloc(num_nodes*sizeof(RELAX4_INT));
+  blk15_1.i15    = malloc(num_nodes*sizeof(RELAX4_INT));
+  blk16_1.i16    = malloc(num_nodes*sizeof(RELAX4_INT));
+  blk17_1.i17    = malloc(num_nodes*sizeof(RELAX4_INT));
 
   if (arrayrc_1.rc == NULL ||
       blk1_1.i1 == NULL ||
@@ -3827,7 +3844,7 @@ int relax4_init(integer num_nodes, integer num_arcs,
 
 int relax4_check_inputs(int max_cost)
 {
-  integer i;
+  RELAX4_INT i;
 
   if (input_1.n < 1 || input_1.na < 1) {
     return RELAX4_FAIL_BAD_SIZE;
@@ -3891,7 +3908,7 @@ int relax4_run()
 
 int relax4_check_output()
 {
-  integer i;
+  RELAX4_INT i;
 
   for (i = 1; i <= input_1.n; ++i) {
     if (arrayb_1.b[i - 1] != 0)

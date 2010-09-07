@@ -18,14 +18,14 @@ file EXT => %w(ext/extconf.rb ext/relax4_wrap.c) do |t|
 end
 
 desc "gem build"
-task :build => EXT do
+task :build do
   sh "gem build relax4.gemspec"
 end
  
 desc "gem release"
 task :release => :build do
   require 'relax4/version'
-  sh "gem push relax4-#{Relax4::VERSION}"
+  sh "gem push relax4-#{Relax4::VERSION}.gem"
 end
 
 require 'rake/testtask'
