@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
 ext/extconf.rb
 ext/relax4.c
 ext/relax4.h
-ext/relax4_f2c.h
 ext/relax4_wrap.c
 README.rdoc)
 

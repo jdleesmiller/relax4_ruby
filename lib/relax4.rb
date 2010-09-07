@@ -30,8 +30,8 @@ module Relax4
   # relax4.h, above).
   #
   # @option args [Array<Integer>] :capacities (nil) for each arc; if not
-  # specified (problem is uncapacitated), all arc capacities are set to +large+;
-  # capacities must be in [0, +large+].
+  # specified (problem is uncapacitated), all arc capacities are set to
+  # +RELAX4_UNCAPACITATED+; capacities must be in [0, +large+].
   #
   # @option args [Array<Integer>] :demands for each node; a node with negative
   # demand is a surplus node; demands should balance (sum to zero), or else the
