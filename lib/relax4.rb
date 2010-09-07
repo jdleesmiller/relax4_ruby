@@ -61,7 +61,8 @@ module Relax4
     large       = args[:large] || RELAX4_DEFAULT_LARGE
     max_cost    = args[:max_cost] || RELAX4_DEFAULT_MAX_COST
     num_arcs    = start_nodes.size
-    capacities  = args[:capacities] || [large]*num_arcs
+    capacities  = args[:capacities] ||
+      [[large, RELAX4_UNCAPACITATED].min]*num_arcs
 
     sizes = [start_nodes, end_nodes, costs, capacities].map{|a| a.size}
     raise ArgumentError.new("bad sizes for start/end_nodes, costs, capacities:"\

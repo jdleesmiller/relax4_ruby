@@ -100,6 +100,24 @@ and run
 * problem state is global (cf. FORTRAN), so can have only one instance at a time
 * add some wrappers for transportation and assignment problems
 
+== HISTORY
+
+<em>1.0.3</em>
+* now uses RELAX4_UNCAPACITATED by default for uncapacitated problems
+* updated docs
+
+<em>1.0.2</em>
+* added RELAX4_UNCAPACITATED; setting capacities to RELAX4_DEFAULT_LARGE to
+  represent uncapacitated arcs was found to cause overflow for some problems
+* now have only the necessary parts of the standard f2c headers
+* more tests 
+
+<em>1.0.1</em>
+* set platform in gemspec to Ruby (not a binary gem)
+
+<em>1.0.0</em>
+* first release
+
 == LICENSE
 
 The authors of RELAX IV (D.P. Bertsekas and P. Tseng) released the code with the

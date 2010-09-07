@@ -166,7 +166,8 @@ ARCS
   def test_solve_lemon_2
     # From test_neg1_lgf in test/min_cost_flow_test.cc. This contains a negative
     # cost cycle (5, 6, 7). The result is that edges in the cycle are at
-    # capacity; if capacities are not specified, they go to the LARGE constant.
+    # capacity; if capacities are not specified, they go to the
+    # RELAX4_UNCAPACITATED constant.
     prob = {
       :demands     => [-100, 0, 0, 100, 0, 0, 0],
       :start_nodes => [  1, 1, 2, 3, 3, 5, 5, 6,   7],
@@ -175,10 +176,11 @@ ARCS
     }
 
     flows = Relax4.solve(prob)
-    assert_equal [0,100,100,0,100,0,500000000,500000000,500000000], flows
+    big = Relax4::RELAX4_UNCAPACITATED
+    assert_equal [0,100,100,0,100,0,big,big,big], flows
 
     flows = Relax4.solve(prob.merge(:auction_init => true))
-    assert_equal [0,100,100,0,100,0,500000000,500000000,500000000], flows
+    assert_equal [0,100,100,0,100,0,big,big,big], flows
 
     # If we put capacity bounds on, we get less flow around the -ve cost cycle.
     flows = Relax4.solve(prob.merge(:capacities=>[5000]*9))
