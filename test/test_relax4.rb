@@ -92,6 +92,17 @@ class TestRelax4< Test::Unit::TestCase
     assert_equal 28759, problem_cost(prob, flows)
   end
 
+  def test_solve_6
+    # This problem also caused issues in the ascnt2_ routine for the same
+    # reasons as the problem in test_solve_5. The fix for that didn't entirely
+    # resolve the issue; see comments in relax4.c.
+    # This bug affected versions 1.0.4 and earlier.
+    prob = problem_from_relax4_inp 'test/test_solve_6.inp'
+    prob[:capacities].map! {|x| [x, Relax4::RELAX4_UNCAPACITATED].min}
+    flows = Relax4.solve(prob)
+    assert_equal 16925, problem_cost(prob, flows)
+  end
+
   def test_solve_lemon_1
     # Some tests stolen from LEMON version 1.2 (test/min_cost_flow_test.cc).
     # Note that we can't handle minimum flows, so we can only run tests with the

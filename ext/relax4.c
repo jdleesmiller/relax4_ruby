@@ -8,15 +8,15 @@
  * 1) Now using dynamic (malloc'd) rather than static arrays.
  * 2) An apparent bug in ascnt2_ has been fixed: the prdcsr array is a
  * node-length array, but it was indexed by the 'nb' variable, which can become
- * larger than the number of nodes. A new arc-length array (temp_nb) has been
- * added to avoid this.
+ * larger than the number of nodes. The prdcsr array is now as long as the max
+ * of the number of arcs and the number of nodes.
  *
  * The f2c linkage dependencies have been removed, but the FORTRAN character of
  * the code has been largely preserved -- you have been warned.
  */
 
 #include "stdlib.h"
-/*#include "stdio.h" */ /* just for tracing*/
+/* #include "stdio.h" */ /* just for tracing*/
 #include "assert.h"
 #include "relax4.h"
 
@@ -35,6 +35,7 @@ typedef char logical1;
 #define TRUE_ (1)
 #define FALSE_ (0)
 #define min(a,b) ((a) <= (b) ? (a) : (b))
+#define max(a,b) ((a) >= (b) ? (a) : (b))
 
 /* 
  * Begin translated RELAX4 code...
@@ -321,10 +322,6 @@ struct {
 } cr_;
 
 #define cr_1 cr_
-
-/* Temporary added by JLM to avoid out-of-bounds problem caused by using the
- * prdcsr array in ascnt2_. */
-RELAX4_INT *temp_nb;
 
 /* Subroutine */ int inidat_(void)
 {
@@ -3670,7 +3667,7 @@ L4:
         if (arrayrc_1.rc[arc - 1] == 0) {
           *delx += arrayu_1.u[arc - 1];
           ++nb;
-          temp_nb[nb - 1] = arc; /* was blk2_3.prdcsr */
+          blk2_3.prdcsr[nb - 1] = arc; 
         }
       }
       /* L6: */
@@ -3705,7 +3702,7 @@ L4:
 
   i__1 = nb;
   for (i__ = 1; i__ <= i__1; ++i__) {
-    arc = temp_nb[i__ - 1]; /* was blk2_3.prdcsr */
+    arc = blk2_3.prdcsr[i__ - 1];
     if (blk13_1.tnxtin[arc - 1] == -1) {
       j = arraye_1.endn[arc - 1];
       blk13_1.tnxtin[arc - 1] = blk12_1.tfstin[j - 1];
@@ -3808,11 +3805,11 @@ int relax4_init(RELAX4_INT num_nodes, RELAX4_INT num_arcs,
   blk15_1.i15 = NULL;
   blk16_1.i16 = NULL;
   blk17_1.i17 = NULL;
-  temp_nb = NULL;
 
   arrayrc_1.rc   = malloc(num_arcs*sizeof(RELAX4_INT));
   blk1_1.i1      = malloc(num_nodes*sizeof(RELAX4_INT));
-  blk2_1.i2      = malloc(num_nodes*sizeof(RELAX4_INT));
+  /* fix for out-of-bounds error in ascnt2_; see comment at top of file */
+  blk2_1.i2      = malloc(max(num_nodes,num_arcs)*sizeof(RELAX4_INT));
   blk3_1.i3      = malloc(num_nodes*sizeof(RELAX4_INT));
   blk4_1.i4      = malloc(num_arcs*sizeof(RELAX4_INT));
   blk5_1.i5      = malloc(num_nodes*sizeof(RELAX4_INT));
@@ -3828,7 +3825,6 @@ int relax4_init(RELAX4_INT num_nodes, RELAX4_INT num_arcs,
   blk15_1.i15    = malloc(num_nodes*sizeof(RELAX4_INT));
   blk16_1.i16    = malloc(num_nodes*sizeof(RELAX4_INT));
   blk17_1.i17    = malloc(num_nodes*sizeof(RELAX4_INT));
-  temp_nb        = malloc(num_arcs*sizeof(RELAX4_INT));
 
   if (arrayrc_1.rc == NULL ||
       blk1_1.i1 == NULL ||
@@ -3847,8 +3843,7 @@ int relax4_init(RELAX4_INT num_nodes, RELAX4_INT num_arcs,
       blk14_1.i14 == NULL ||
       blk15_1.i15 == NULL ||
       blk16_1.i16 == NULL ||
-      blk17_1.i17 == NULL ||
-      temp_nb == NULL) {
+      blk17_1.i17 == NULL) {
     relax4_free();
     return RELAX4_FAIL_OUT_OF_MEMORY;
   }
@@ -3962,6 +3957,5 @@ void relax4_free()
   if(blk15_1.i15   ) free(blk15_1.i15   );
   if(blk16_1.i16   ) free(blk16_1.i16   );
   if(blk17_1.i17   ) free(blk17_1.i17   );
-  if(temp_nb       ) free(temp_nb       );
 }
 
