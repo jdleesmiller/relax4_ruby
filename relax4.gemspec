@@ -11,18 +11,25 @@ Gem::Specification.new do |s|
   s.email       = ["jdleesmiller@gmail.com"]
   s.homepage    = "http://relax4.rubyforge.org/"
   s.summary     = "The RELAX IV code for the Minimum Cost Network Flow Problem"
-  s.description = "Ruby interface for the RELAX IV code by D.P. Bertsekas and"\
-                  " P. Tseng."
+  s.description = <<DESC
+Ruby interface for the RELAX IV code by D.P. Bertsekas and P. Tseng.
+DESC
   s.rubyforge_project = "relax4"
   
-  s.files        = Dir.glob("lib/**/*") + %w(
+  s.files        = Dir.glob("lib/**/*.rb") + %w(
 ext/extconf.rb
 ext/relax4.c
 ext/relax4.h
 ext/relax4_wrap.c
-README.rdoc)
+README.rdoc
+test/RELAX4.INP
+test/test_solve_4.inp
+test/test_solve_5.inp)
+
+  s.rdoc_options = ["--main", "README.rdoc"]
+  s.extra_rdoc_files << "README.rdoc"
+  s.test_files = Dir.glob("test/test_*.rb")
 
   s.extensions = "ext/extconf.rb"
-  s.require_paths << 'lib'
   s.require_paths << 'ext'
 end
