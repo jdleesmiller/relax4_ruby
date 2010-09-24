@@ -10,6 +10,7 @@ begin
     g.rdoc.files.delete_if {|f| !%w(. lib lib/relax4).member?(File.dirname(f))}
     g.yard.files.delete_if {|f| !%w(. lib lib/relax4).member?(File.dirname(f))}
 
+    # Old-style docs; rdoc 2.5.11 seems to mangle the included header file.
     g.rdoc.use_gem_if_available = false
   end
 rescue LoadError
