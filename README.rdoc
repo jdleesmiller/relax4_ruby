@@ -102,6 +102,10 @@ and run
 
 == HISTORY
 
+<em>1.0.4</em>
+* fixed apparent bug in ascnt2_ that caused memory corruption or infinite loop
+* switched to gemma for basic rake tasks 
+
 <em>1.0.3</em>
 * now uses RELAX4_UNCAPACITATED by default for uncapacitated problems
 * updated docs
