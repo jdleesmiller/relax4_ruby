@@ -12,6 +12,8 @@ begin
 
     # Old-style docs; rdoc 2.5.11 seems to mangle the included header file.
     g.rdoc.use_gem_if_available = false
+
+    g.rdoc.title = "relax4-#{g.gemspec.version}"
   end
 rescue LoadError
   # Gemma is not installed; optionally, you can print a message:
@@ -36,7 +38,7 @@ end
 
 desc "docs to rubyforge"
 task :publish_docs => :rdoc do
-  sh "rsync --archive --delete --verbose yard/* "\
+  sh "rsync --archive --delete --verbose rdoc/* "\
      " jdleesmiller@rubyforge.org:/var/www/gforge-projects/relax4"
 end
 

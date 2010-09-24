@@ -2,6 +2,6 @@
 /ext/*.o
 /ext/*.so
 /coverage
-/doc
+/rdoc
 /ext/Makefile
 /ext/mkmf.log
