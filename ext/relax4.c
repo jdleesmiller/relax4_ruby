@@ -2,7 +2,14 @@
  * This file was translated by f2c (FORTRAN to C) (version 20090411) from
  * relax4.f (see http://www.netlib.org/f2c).
  *
- * It has been modified (JLM) for use as a library (see relax4.h).
+ * It has been modified (JLM) for use as a library (see relax4.h for interface).
+ * The main changes are:
+ *
+ * 1) Now using dynamic (malloc'd) rather than static arrays.
+ * 2) An apparent bug in ascnt2_ has been fixed: the prdcsr array is a
+ * node-length array, but it was indexed by the 'nb' variable, which can become
+ * larger than the number of nodes. A new arc-length array (temp_nb) has been
+ * added to avoid this.
  *
  * The f2c linkage dependencies have been removed, but the FORTRAN character of
  * the code has been largely preserved -- you have been warned.
@@ -314,6 +321,10 @@ struct {
 } cr_;
 
 #define cr_1 cr_
+
+/* Temporary added by JLM to avoid out-of-bounds problem caused by using the
+ * prdcsr array in ascnt2_. */
+RELAX4_INT *temp_nb;
 
 /* Subroutine */ int inidat_(void)
 {
@@ -3659,7 +3670,7 @@ L4:
         if (arrayrc_1.rc[arc - 1] == 0) {
           *delx += arrayu_1.u[arc - 1];
           ++nb;
-          blk2_3.prdcsr[nb - 1] = arc;
+          temp_nb[nb - 1] = arc; /* was blk2_3.prdcsr */
         }
       }
       /* L6: */
@@ -3694,7 +3705,7 @@ L4:
 
   i__1 = nb;
   for (i__ = 1; i__ <= i__1; ++i__) {
-    arc = blk2_3.prdcsr[i__ - 1];
+    arc = temp_nb[i__ - 1]; /* was blk2_3.prdcsr */
     if (blk13_1.tnxtin[arc - 1] == -1) {
       j = arraye_1.endn[arc - 1];
       blk13_1.tnxtin[arc - 1] = blk12_1.tfstin[j - 1];
@@ -3797,6 +3808,7 @@ int relax4_init(RELAX4_INT num_nodes, RELAX4_INT num_arcs,
   blk15_1.i15 = NULL;
   blk16_1.i16 = NULL;
   blk17_1.i17 = NULL;
+  temp_nb = NULL;
 
   arrayrc_1.rc   = malloc(num_arcs*sizeof(RELAX4_INT));
   blk1_1.i1      = malloc(num_nodes*sizeof(RELAX4_INT));
@@ -3816,6 +3828,7 @@ int relax4_init(RELAX4_INT num_nodes, RELAX4_INT num_arcs,
   blk15_1.i15    = malloc(num_nodes*sizeof(RELAX4_INT));
   blk16_1.i16    = malloc(num_nodes*sizeof(RELAX4_INT));
   blk17_1.i17    = malloc(num_nodes*sizeof(RELAX4_INT));
+  temp_nb        = malloc(num_arcs*sizeof(RELAX4_INT));
 
   if (arrayrc_1.rc == NULL ||
       blk1_1.i1 == NULL ||
@@ -3834,7 +3847,8 @@ int relax4_init(RELAX4_INT num_nodes, RELAX4_INT num_arcs,
       blk14_1.i14 == NULL ||
       blk15_1.i15 == NULL ||
       blk16_1.i16 == NULL ||
-      blk17_1.i17 == NULL) {
+      blk17_1.i17 == NULL ||
+      temp_nb == NULL) {
     relax4_free();
     return RELAX4_FAIL_OUT_OF_MEMORY;
   }
@@ -3948,5 +3962,6 @@ void relax4_free()
   if(blk15_1.i15   ) free(blk15_1.i15   );
   if(blk16_1.i16   ) free(blk16_1.i16   );
   if(blk17_1.i17   ) free(blk17_1.i17   );
+  if(temp_nb       ) free(temp_nb       );
 }
 
