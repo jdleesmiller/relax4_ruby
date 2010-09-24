@@ -81,6 +81,17 @@ class TestRelax4< Test::Unit::TestCase
     assert_equal 1381, problem_cost(prob, flows)
   end
 
+  def test_solve_5
+    # This problem caused either a memory error or an infinite loop due to an
+    # apparent bug in the ascnt2_ routine (out of bounds on the prdcsr array,
+    # which was not long enough to record the number of newly balanced arcs).
+    # This bug affected versions 1.0.3 and earlier.
+    prob = problem_from_relax4_inp 'test/test_solve_5.inp'
+    prob[:capacities].map! {|x| [x, Relax4::RELAX4_UNCAPACITATED].min}
+    flows = Relax4.solve(prob)
+    assert_equal 28759, problem_cost(prob, flows)
+  end
+
   def test_solve_lemon_1
     # Some tests stolen from LEMON version 1.2 (test/min_cost_flow_test.cc).
     # Note that we can't handle minimum flows, so we can only run tests with the
