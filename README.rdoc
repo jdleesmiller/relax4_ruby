@@ -1,4 +1,4 @@
-= relax4_ruby
+= relax4
 
 http://relax4.rubyforge.org
 
