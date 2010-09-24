@@ -60,10 +60,10 @@ class TestRelax4< Test::Unit::TestCase
     prob = problem_from_relax4_inp 'test/RELAX4.INP'
 
     flows = Relax4.solve(prob)
-    assert_equal -26464, problem_cost(prob, flows)
+    assert_equal(-26464, problem_cost(prob, flows))
 
     flows = Relax4.solve(prob.merge(:auction_init => true))
-    assert_equal -26464, problem_cost(prob, flows)
+    assert_equal(-26464, problem_cost(prob, flows))
   end
 
   def test_solve_4
@@ -195,11 +195,11 @@ ARCS
 
     # If we put capacity bounds on, we get less flow around the -ve cost cycle.
     flows = Relax4.solve(prob.merge(:capacities=>[5000]*9))
-    assert_equal -40000, problem_cost(prob, flows)
+    assert_equal(-40000, problem_cost(prob, flows))
 
     # If we put capacity bounds on, we get less flow around the -ve cost cycle.
     flows = Relax4.solve(prob.merge(:capacities=>[5000]*9, :auction_init=>true))
-    assert_equal -40000, problem_cost(prob, flows)
+    assert_equal(-40000, problem_cost(prob, flows))
   end
 
   def test_bad_args_1
