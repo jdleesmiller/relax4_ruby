@@ -102,6 +102,9 @@ and run
 
 == HISTORY
 
+<em>1.0.5</em>
+* fix in previous version didn't quite solve the problem; new fix applied
+
 <em>1.0.4</em>
 * fixed apparent bug in ascnt2_ that caused memory corruption or infinite loop
 * switched to gemma for basic rake tasks 
