@@ -1,4 +1,5 @@
 require 'mkmf' # for Config
+require 'rake/clean'
 
 begin
   require 'rubygems'
