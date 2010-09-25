@@ -5,16 +5,13 @@ begin
   require 'gemma'
 
   Gemma::RakeTasks.with_gemspec_file 'relax4.gemspec' do |g|
-    # Remove extension files (rdoc can't currently make sense of them) and some
-    # test data files.
-    g.rdoc.files.delete_if {|f| !%w(. lib lib/relax4).member?(File.dirname(f))}
-    g.yard.files.delete_if {|f| !%w(. lib lib/relax4).member?(File.dirname(f))}
-
-    # Old-style docs; rdoc 2.5.11 seems to mangle the included header file.
+    # Use old rdoc, because rdoc 2.5.11 seems to mangle the included relax4.h
+    # header file. Unfortunately, the old rdoc ignores --exclude when given an
+    # explicit file list (2.5.11 doesn't), so we have to fix that up here.
     g.rdoc.use_gem_if_available = false
+    g.rdoc.files.delete_if {|f| File.dirname(f) == 'ext'}
   end
 rescue LoadError
-  # Gemma is not installed; optionally, you can print a message:
   puts "Install gemma (sudo gem install gemma) for more rake tasks."
 end
 
@@ -36,7 +33,7 @@ end
 
 desc "docs to rubyforge"
 task :publish_docs => :rdoc do
-  sh "rsync --archive --delete --verbose yard/* "\
+  sh "rsync --archive --delete --verbose rdoc/* "\
      " jdleesmiller@rubyforge.org:/var/www/gforge-projects/relax4"
 end
 
