@@ -98,9 +98,13 @@ and run
 
 * there are some hard-coded parameters that could be exposed
 * problem state is global (cf. FORTRAN), so can have only one instance at a time
-* add some wrappers for transportation and assignment problems
+* more tests for transportation and assignment problem wrappers
 
 == HISTORY
+
+<em>1.1.0</em>
+* added wrappers for transportation and assignment problems
+* updated docs
 
 <em>1.0.5</em>
 * fix in previous version didn't quite solve the problem; new fix applied
@@ -138,7 +142,7 @@ following user guidelines:
   AND THE RELAXATION METHOD.  THEY SHOULD ALSO REGISTER WITH THE
   AUTHORS TO RECEIVE UPDATES AND SUBSEQUENT RELEASES.
 
-The author of the RELAX IV code is:
+The main author of the RELAX IV code is:
 
   DIMITRI P. BERTSEKAS
   LABORATORY FOR INFORMATION AND DECISION SYSTEMS

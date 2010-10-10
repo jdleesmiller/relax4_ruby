@@ -159,6 +159,119 @@ module Relax4
   end
 
   #
+  # Solve a transportation problem.
+  #
+  # There are +m+ suppliers and +n+ consumers of some commodity. Each supplier
+  # has a given _supply_ which must be used, and each consumer has a given
+  # _demand_ which must be satisfied; it is assumed that the total supply equals
+  # the total demand. The cost of transporting one unit of the commodity from
+  # each supplier to each consumer is given, and the objective is to perform the
+  # transport with minimum cost. The output is a +m+ by +n+ matrix that gives
+  # the flow from each supplier to each consumer.
+  #
+  # @param [Hash] args named arguments
+  #
+  # @option args [Array<Array<Integer>>] :costs matrix with +m+ rows (one for
+  # each supplier) and +n+ columns (one for each consumer); a cost of +nil+
+  # means that there is no corresponding edge (transport is impossible);
+  # negative costs are allowed; may be non-square but must be rectangular (all
+  # rows must have the same size).
+  #
+  # @option args [Array<Integer>] :supplies for each supplier; size +m+; total
+  # demand should equal total supply, or else the problem will be infeasible
+  # (but you can add a dummy node to fix this).
+  #
+  # @option args [Array<Integer>] :demands for each consumer; size +n+; total
+  # demand should equal total supply, or else the problem will be infeasible
+  # (but you can add a dummy node to fix this).
+  #
+  # @option args [Boolean] :auction_init see {solve}
+  #
+  # @option args [Integer] :large see {solve}
+  # 
+  # @option args [Integer] :max_cost see {solve}
+  #
+  # @return [Array<Array<Integer>>] optimal flows from each supplier to each
+  # consumer; size +m+ by +n+; +nil+ entries in the cost matrix will have flow 0
+  # here.
+  #
+  # @raise [ArgumentError] if problem inputs are invalid
+  #
+  # @raise [InfeasibleError] if problem is infeasible
+  #
+  def self.solve_transportation_problem args
+    args     = args.dup
+    costs    = get_arg(args, :costs)
+    supplies = get_arg(args, :supplies)
+    demands  = get_arg(args, :demands)
+
+    m = supplies.size
+    n = demands.size
+
+    arcs = set_args_from_cost_matrix(args, costs, m, n)
+    args[:demands] = supplies.map{|x| -x} + demands
+
+    arc_flows = Relax4.solve(args)
+
+    # Extract output into matrix with same dims as input cost matrix.
+    flows = Array.new(m) { Array.new(n, 0) }
+    arcs.zip(arc_flows).each do |(i,j),fij|
+      flows[i][j] = fij
+    end
+    flows
+  end
+
+  #
+  # Solve a square assignment problem.
+  #
+  # There are +n+ agents and +n+ tasks, and each agent must be assigned to
+  # exactly one task. The cost of each assignment is given, and the objective is
+  # to find the assignment with the lowest cost.
+  #
+  # Some assignments can be made illegal by passing +nil+ in the relevant entry
+  # in the cost matrix. If you have more agents than tasks (or vice versa), you
+  # can add some columns (or rows) of zeros to the cost matrix. 
+  #
+  # @param [Hash] args named arguments
+  #
+  # @option args [Array<Array<Integer>>] :costs square matrix with +n+ rows (one
+  # for each agent) and +n+ columns (one for each task); a cost of +nil+ means
+  # that the corresponding assignment is not allowed; negative costs are
+  # allowed.
+  #
+  # @option args [Boolean] :auction_init see {solve}
+  #
+  # @option args [Integer] :large see {solve}
+  # 
+  # @option args [Integer] :max_cost see {solve}
+  #
+  # @return [Array<Integer>] zero-based index of task assigned to each agent.
+  #
+  # @raise [ArgumentError] if problem inputs are invalid
+  #
+  # @raise [InfeasibleError] if problem is infeasible
+  # 
+  #
+  def self.solve_assignment_problem args
+    args  = args.dup
+    costs = get_arg(args, :costs)
+
+    n = costs.size
+
+    arcs = set_args_from_cost_matrix(args, costs, n, n)
+    args[:demands]     = [-1]*n + [1]*n
+
+    arc_flows = Relax4.solve(args)
+
+    # Find indexes.
+    assignment = Array.new(n)
+    arcs.zip(arc_flows).each do |(i,j),fij|
+      assignment[i] = j if fij > 0
+    end
+    assignment
+  end
+
+  #
   # Raised to indicate that a problem is infeasible.
   #
   # There are several points in the program at which infeasibility is detected.
@@ -220,5 +333,25 @@ module Relax4
   private
 
   def self.get_arg(args, key); args[key] or raise "#{key} is required" end
+
+  #
+  # Set start_nodes, end_nodes and costs based on cost matrix; nil entries in
+  # the cost matrix are not mapped to arcs.
+  #
+  # @return Array<Array<Integer>> array of pairs of (zero-based) indices into
+  # costs that correspond to the created arcs; size is <tt>m*n</tt> minus the
+  # number of nil entries in the costs matrix
+  #
+  def self.set_args_from_cost_matrix(args, costs, m, n)
+    # Filter out any nil costs.
+    arcs = (0...m).to_a.product((0...n).to_a).delete_if {|i,j| !costs[i][j]}
+
+    # Make problem inputs.
+    args[:start_nodes] = arcs.map{|i,j| i+1}
+    args[:end_nodes]   = arcs.map{|i,j| m+j+1}
+    args[:costs]       = arcs.map{|i,j| costs[i][j]}
+
+    arcs
+  end
 end
 

@@ -56,6 +56,14 @@ class TestRelax4< Test::Unit::TestCase
     flows.zip(prob[:costs]).map{|f,c|f*c}.inject(:+)
   end
 
+  # Compute cost of flows when costs and flows are represented as matrices, and
+  # some of the costs may be nil.
+  def matrix_problem_cost prob, flows
+    flows = flows.flatten
+    costs = prob[:costs].flatten
+    flows.zip(costs).map{|f,c|f*c if c}.compact.inject(:+)
+  end
+
   def test_solve_3
     prob = problem_from_relax4_inp 'test/RELAX4.INP'
 
@@ -290,6 +298,55 @@ ARCS
     end
     assert_raise Relax4::InfeasibleError do
       Relax4.solve(prob.merge(:auction_init => true))
+    end
+  end
+
+  def test_transportation_problem_1
+    # From http://www.me.utexas.edu/~jensen/models/network/net8.html
+    prob = {
+      :costs =>   [[   3,   1, nil],
+                   [   4,   2,   4],
+                   [ nil,   3,   3]],
+      :demands =>  [   7,   3,   5],
+      :supplies => [   5,   7,   3]}
+    flows = Relax4.solve_transportation_problem(prob)
+    assert_equal 46, matrix_problem_cost(prob, flows)
+    assert_equal [[2, 3, 0],
+                  [5, 0, 2],
+                  [0, 0, 3]], flows
+  end
+
+  def test_assignment_problem_1
+    # From http://www.me.utexas.edu/~jensen/models/network/net9.html
+    prob = {
+      :costs =>   [[ nil,   8,   6,  12,   1],
+                   [  15,  12,   7, nil,  10],
+                   [  10, nil,   5,  14, nil],
+                   [  12, nil,  12,  16,  15],
+                   [  18,  17,  14, nil,  13]]}
+    assignment = Relax4.solve_assignment_problem(prob)
+    assert_equal [4, 2, 3, 0, 1], assignment
+  end
+
+  def test_assignment_problem_2
+    # Test with no nils.
+    assert_equal [0, 1, 2],
+      Relax4.solve_assignment_problem(:costs => [[1, 2, 3],
+                                                 [4, 5, 6],
+                                                 [7, 8, 9]])
+
+    # Test with a row of nils; problem is infeasible.
+    assert_raise Relax4::InfeasibleError do
+      Relax4.solve_assignment_problem(:costs => [[nil, nil, nil],
+                                                 [  4,   5,   6],
+                                                 [  7,   8,   9]])
+    end
+
+    # Test with a column of nils; problem is infeasible.
+    assert_raise Relax4::InfeasibleError do
+      Relax4.solve_assignment_problem(:costs => [[nil,   2,   3],
+                                                 [nil,   5,   6],
+                                                 [nil,   8,   9]])
     end
   end
 end
