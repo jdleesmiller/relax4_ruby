@@ -64,6 +64,12 @@ class TestRelax4< Test::Unit::TestCase
     flows.zip(costs).map{|f,c|f*c if c}.compact.inject(:+)
   end
 
+  # Compute cost of given assignment. 
+  def assignment_problem_cost prob, assignment
+    n = prob[:costs].size # assumed square
+    n.times.map{|i| prob[:costs][i][assignment[i]]}.inject(:+)
+  end
+
   def test_solve_3
     prob = problem_from_relax4_inp 'test/RELAX4.INP'
 
@@ -316,6 +322,27 @@ ARCS
                   [0, 0, 3]], flows
   end
 
+  def test_transportation_problem_2
+    # From http://www.nios.ac.in/srsec311/opt-lp6.pdf (terminal questions)
+    prob = {
+      :costs =>   [[   1,   2,   1,   4],
+                   [   3,   3,   2,   1],
+                   [   4,   2,   5,   9]],
+      :supplies => [  30,  50,  20],
+      :demands  => [  20,  40,  30,  10]}
+    flows = Relax4.solve_transportation_problem(prob)
+    assert_equal 180, matrix_problem_cost(prob, flows)
+
+    prob = {
+      :costs =>   [[  21,  16,  25,  13],
+                   [  17,  18,  14,  23],
+                   [  32,  17,  18,  41]],
+      :supplies => [  11,  13,  19],
+      :demands  => [   6,  10,  12,  15]}
+    flows = Relax4.solve_transportation_problem(prob)
+    assert_equal 711, matrix_problem_cost(prob, flows)
+  end
+
   def test_assignment_problem_1
     # From http://www.me.utexas.edu/~jensen/models/network/net9.html
     prob = {
@@ -348,5 +375,70 @@ ARCS
                                                  [nil,   5,   6],
                                                  [nil,   8,   9]])
     end
+  end
+
+  def test_assignment_problem_3
+    # From http://www.utdallas.edu/~scniu/OPRE-6201/documents/TP5-Assignment.pdf
+    prob = {
+      :costs =>   [[  13,   4,   7,   6],
+                   [   1,  11,   5,   4],
+                   [   6,   7,   2,   8],
+                   [   1,   3,   5,   9]]}
+    assignment = Relax4.solve_assignment_problem(prob)
+    assert_equal [1, 3, 2, 0], assignment
+    assert_equal 11, assignment_problem_cost(prob, assignment)
+  end
+
+  def string_array_to_matrix xs, n
+    xs = xs.map{|x| x.to_i}
+    n.times.map{|i| xs[i*n,n]}
+  end
+
+  def test_assignment_problem_4
+    # From http://www.nios.ac.in/srsec311/opt-lp5.pdf
+    prob = {:costs => string_array_to_matrix(%w(
+      140 110 155 170 180
+      115 100 110 140 155
+      120 90 135 150 165
+      30 30 60 60 90
+      35 15 50 60 85), 5)}
+    assignment = Relax4.solve_assignment_problem(prob)
+    assert_equal [4,2,1,0,3], assignment
+    assert_equal 470, assignment_problem_cost(prob, assignment)
+
+    prob = {:costs => string_array_to_matrix(%w(
+      15 17 24 16
+      10 15 12 13
+      17 19 18 16
+      13 20 16 14), 4)}
+    assignment = Relax4.solve_assignment_problem(prob)
+    assert_equal [1, 2, 3, 0], assignment
+    assert_equal 58, assignment_problem_cost(prob, assignment)
+
+    prob = {:costs => string_array_to_matrix(%w(
+       8 26 17 11
+      14 29 5 27
+      40 21 20 17
+      19 26 24 10), 4)}
+    assignment = Relax4.solve_assignment_problem(prob)
+    assert_equal [0, 2, 1, 3], assignment
+
+    prob = {:costs => string_array_to_matrix(%w(
+      10  6  4  8  3
+       2 11  7  7  6
+       5 10 11  4  8
+       6  5  3  2  5
+      11  7 10 11  7), 5)}
+    assignment = Relax4.solve_assignment_problem(prob)
+    assert_equal [4, 0, 3, 2, 1], assignment
+    
+    prob = {:costs => string_array_to_matrix(%w(
+       8  9 10 11
+      10 11 12 13
+      13 14 15 13
+       9 11 14 10), 4)}
+    assignment = Relax4.solve_assignment_problem(prob)
+    assert_equal 43, assignment_problem_cost(prob, assignment)
+    assert_equal 43, assignment_problem_cost(prob, [2, 1, 3, 0])
   end
 end
