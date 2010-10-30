@@ -6,7 +6,8 @@ http://github.com/jdleesmiller/relax4_ruby
 
 == DESCRIPTION
 
-Ruby interface for the RELAX IV code for the minimum cost network flow problem.
+Ruby interface for the RELAX IV code for minimum cost network flow problems,
+which include transportation problems and assignment problems.
 In the words of the code's authors:
 
   PURPOSE - THIS ROUTINE IMPLEMENTS THE RELAXATION METHOD
@@ -34,7 +35,7 @@ In the words of the code's authors:
       FOR THE MINIMUM COST FLOW PROBLEM", LIDS REPORT P-2146, MIT, NOV. 1992.
 
 The original source can be downloaded from:
-* http://elib.zib.de/pub/Packages/mathprog/mincost/relax-4/
+* http://elib.zib.de/pub/Packages/mathprog/mincost/relax-4
 
 See also:
 * http://www-neos.mcs.anl.gov/neos/solvers/lno:RELAX4/RELAX4.html
@@ -44,7 +45,10 @@ See also:
 
   require 'rubygems'
   require 'relax4'
-  
+
+A general network flow problem:
+
+  #
   # From Figure 29.3 of Cormen, Leiserson, Rivest and Stein (2001).
   # Introduction to Algorithms, 2nd Edition.
   #
@@ -64,6 +68,32 @@ See also:
       :capacities  => [ 5, 2, 1, 2, 4]) #=> [2, 2, 1, 1, 3]
 
 A lower-level interface is also available; see the docs for the Relax4 module.
+
+A transportation problem:
+
+  #
+  # From http://www.me.utexas.edu/~jensen/models/network/net8.html
+  # A nil cost means that the flow is not allowed.
+  #
+  Relax4.solve_transportation_problem(
+    :costs =>   [[   3,   1, nil],
+                 [   4,   2,   4],
+                 [ nil,   3,   3]],
+    :demands =>  [   7,   3,   5],
+    :supplies => [   5,   7,   3]) #=> [[2, 3, 0], [5, 0, 2], [0, 0, 3]]
+
+An assignment problem:
+
+  #
+  # From http://www.me.utexas.edu/~jensen/models/network/net9.html
+  # A nil cost means that the assignment is not allowed.
+  #
+  Relax4.solve_assignment_problem(:costs =>
+    [[ nil,   8,   6,  12,   1],
+     [  15,  12,   7, nil,  10],
+     [  10, nil,   5,  14, nil],
+     [  12, nil,  12,  16,  15],
+     [  18,  17,  14, nil,  13]]) #=> [4, 2, 3, 0, 1]
 
 == REQUIREMENTS
 
@@ -98,9 +128,12 @@ and run
 
 * there are some hard-coded parameters that could be exposed
 * problem state is global (cf. FORTRAN), so can have only one instance at a time
-* add some wrappers for transportation and assignment problems
 
 == HISTORY
+
+<em>1.1.0</em>
+* added wrappers for transportation and assignment problems
+* updated docs
 
 <em>1.0.5</em>
 * fix in previous version didn't quite solve the problem; new fix applied
@@ -138,7 +171,7 @@ following user guidelines:
   AND THE RELAXATION METHOD.  THEY SHOULD ALSO REGISTER WITH THE
   AUTHORS TO RECEIVE UPDATES AND SUBSEQUENT RELEASES.
 
-The author of the RELAX IV code is:
+The main author of the RELAX IV code is:
 
   DIMITRI P. BERTSEKAS
   LABORATORY FOR INFORMATION AND DECISION SYSTEMS
