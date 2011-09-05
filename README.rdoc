@@ -98,11 +98,11 @@ An assignment problem:
 == REQUIREMENTS
 
 Has been tested on:
-* ruby 1.8.7 (2011-06-30 patchlevel 352) [i686-linux]
-* ruby 1.9.2p290 (2011-07-09 revision 32553) [i686-linux]
-* x86_64-linux (CentOS) with Ruby 1.8.7p72
+* ruby 1.8.7 (2011-06-30 patchlevel 352) [i686-linux] and [x86_64-linux]
+* ruby 1.9.2p290 (2011-07-09 revision 32553) [i686-linux] and [x86_64-linux]
 
-The following packages were required to install on Ubuntu 10.04:
+The following packages were required to install with the system ruby on Ubuntu
+10.04:
 
 * ruby, ruby-dev, rubygems
 
@@ -111,18 +111,16 @@ The bindings were generated with f2c (FORTRAN to C converter) and SWIG
 
 == INSTALL
 
-You should be able to install with
-
   gem install relax4
 
-Alternatively, you can get the source with
+== DEVELOPMENT
 
-  git clone http://github.com/jdleesmiller/relax4_ruby.git
+Obtain the source from github (http://github.com/jdleesmiller/relax4_ruby) and
+use bundler to get the development dependencies:
 
-and run
-
-  gem build relax4.gemspec
-  gem install relax4-<version>.gem
+  gem install bundler
+  bundle
+  rake -T # list development tasks
 
 == TODO
 
