@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    relax4 (1.1.1)
+    relax4 (1.2.0)
 
 PATH
   remote: ../gemma

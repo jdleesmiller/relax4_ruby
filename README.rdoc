@@ -131,9 +131,11 @@ and run
 
 == HISTORY
 
-<em>1.1.1</em>
+<em>1.2.0</em> 20110905
 * reorganized gem to be consistent with http://guides.rubygems.org/c-extensions
 * now using gemma 2 for development tasks
+* added major, minor and patch version constants (no other API changes)
+* wrapper regenerated with swig 2.0.4 (was 1.3.38)
 
 <em>1.1.0</em>
 * added wrappers for transportation and assignment problems
