@@ -131,6 +131,10 @@ and run
 
 == HISTORY
 
+<em>1.1.1</em>
+* reorganized gem to be consistent with http://guides.rubygems.org/c-extensions
+* now using gemma 2 for development tasks
+
 <em>1.1.0</em>
 * added wrappers for transportation and assignment problems
 * updated docs
