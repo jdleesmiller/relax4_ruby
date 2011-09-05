@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
@@ -15,21 +16,19 @@ Gem::Specification.new do |s|
 Ruby interface for the RELAX IV code by D.P. Bertsekas and P. Tseng.
 DESC
   s.rubyforge_project = "relax4"
-  
-  s.files = Dir.glob("lib/**/*.rb") + Dir.glob("test/*.{inp,INP}") + %w(
+
+  s.files = Dir.glob("lib/**/*.rb") + Dir.glob("test/relax4/*.{inp,INP}") + %w(
 ext/extconf.rb
 ext/relax4.c
 ext/relax4.h
 ext/relax4_wrap.c
 )
+  s.test_files = Dir.glob("test/relax4/*_test.rb")
+  s.extensions = ["ext/extconf.rb"]
 
   s.rdoc_options = [
     "--main",    "README.rdoc",
     "--title",   "relax4-#{Relax4::VERSION}",
     "--exclude", "ext"] # rdoc can't parse swig output -- we just get junk
   s.extra_rdoc_files << "README.rdoc"
-  s.test_files = Dir.glob("test/test_*.rb")
-
-  s.extensions = "ext/extconf.rb"
-  s.require_paths << 'ext'
 end

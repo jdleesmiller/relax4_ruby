@@ -1,6 +1,8 @@
 require "test/unit"
 require "relax4"
 
+INPUT_PATH = File.join('test','relax4')
+
 class TestRelax4< Test::Unit::TestCase
   def test_solve_1
     # From Figure 7.14 of Bertsimas and Tsitsiklis (1997). Introduction to
@@ -71,7 +73,7 @@ class TestRelax4< Test::Unit::TestCase
   end
 
   def test_solve_3
-    prob = problem_from_relax4_inp 'test/RELAX4.INP'
+    prob = problem_from_relax4_inp File.join(INPUT_PATH, 'RELAX4.INP')
 
     flows = Relax4.solve(prob)
     assert_equal(-26464, problem_cost(prob, flows))
@@ -89,7 +91,7 @@ class TestRelax4< Test::Unit::TestCase
     # Note that giving this file to the original application works, because it
     # only reads the first 8 digits of any input number (format I8) -- i.e. it
     # sets the capacities to 50M not 500M. 
-    prob = problem_from_relax4_inp 'test/test_solve_4.inp'
+    prob = problem_from_relax4_inp File.join(INPUT_PATH, 'test_solve_4.inp')
     prob[:capacities].map! {|x| [x, Relax4::RELAX4_UNCAPACITATED].min}
     flows = Relax4.solve(prob)
     assert_equal 1381, problem_cost(prob, flows)
@@ -100,7 +102,7 @@ class TestRelax4< Test::Unit::TestCase
     # apparent bug in the ascnt2_ routine (out of bounds on the prdcsr array,
     # which was not long enough to record the number of newly balanced arcs).
     # This bug affected versions 1.0.3 and earlier.
-    prob = problem_from_relax4_inp 'test/test_solve_5.inp'
+    prob = problem_from_relax4_inp File.join(INPUT_PATH, 'test_solve_5.inp')
     prob[:capacities].map! {|x| [x, Relax4::RELAX4_UNCAPACITATED].min}
     flows = Relax4.solve(prob)
     assert_equal 28759, problem_cost(prob, flows)
@@ -111,7 +113,7 @@ class TestRelax4< Test::Unit::TestCase
     # reasons as the problem in test_solve_5. The fix for that didn't entirely
     # resolve the issue; see comments in relax4.c.
     # This bug affected versions 1.0.4 and earlier.
-    prob = problem_from_relax4_inp 'test/test_solve_6.inp'
+    prob = problem_from_relax4_inp File.join(INPUT_PATH, 'test_solve_6.inp')
     prob[:capacities].map! {|x| [x, Relax4::RELAX4_UNCAPACITATED].min}
     flows = Relax4.solve(prob)
     assert_equal 16925, problem_cost(prob, flows)
