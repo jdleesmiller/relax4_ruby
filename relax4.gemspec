@@ -17,14 +17,11 @@ Ruby interface for the RELAX IV code by D.P. Bertsekas and P. Tseng.
 DESC
   s.rubyforge_project = "relax4"
 
-  s.files = Dir.glob("lib/**/*.rb") + Dir.glob("test/relax4/*.{inp,INP}") + %w(
-ext/extconf.rb
-ext/relax4.c
-ext/relax4.h
-ext/relax4_wrap.c
-)
+  s.files = Dir.glob("lib/**/*.rb") +
+    Dir.glob("ext/relax4/*.{rb,c,h}") +
+    Dir.glob("test/relax4/*.{inp,INP}")
   s.test_files = Dir.glob("test/relax4/*_test.rb")
-  s.extensions = ["ext/extconf.rb"]
+  s.extensions = ["ext/relax4/extconf.rb"]
 
   s.rdoc_options = [
     "--main",    "README.rdoc",
