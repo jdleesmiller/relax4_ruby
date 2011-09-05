@@ -338,7 +338,7 @@ module Relax4
   # Set start_nodes, end_nodes and costs based on cost matrix; nil entries in
   # the cost matrix are not mapped to arcs.
   #
-  # @return Array<Array<Integer>> array of pairs of (zero-based) indices into
+  # @return [Array<Array<Integer>>] array of pairs of (zero-based) indices into
   # costs that correspond to the created arcs; size is <tt>m*n</tt> minus the
   # number of nil entries in the costs matrix
   #
