@@ -45,24 +45,11 @@ CLEAN.include('ext/**/Makefile')
 CLOBBER.include('lib/**/*.so')
 CLOBBER.include(WRAPPER_C)
 
-## Run extconf to build.
-#EXT = "ext/relax4.#{RbConfig::CONFIG['DLEXT']}"
-#file EXT => %w(ext/extconf.rb ext/relax4_wrap.c) do |t|
-#  Dir.chdir('ext') do
-#    ruby "extconf.rb"
-#    sh "make"
-#  end
-#end
-
 desc "docs to rubyforge"
 task :publish_docs => :rdoc do
   sh "rsync --archive --delete --verbose rdoc/* "\
      " jdleesmiller@rubyforge.org:/var/www/gforge-projects/relax4"
 end
 
-#CLEAN.include('ext/*.o', 'ext/mkmf.log', 'ext/Makefile')
-#CLOBBER.include('ext/*.so')
-
-#task :test => EXT
 task :default => :test
 
