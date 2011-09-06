@@ -1,4 +1,4 @@
-require 'relax4.so'
+require 'relax4/relax4' # the C extension
 
 # 
 # Methods for calling the RELAX IV solver.
@@ -7,9 +7,9 @@ require 'relax4.so'
 #
 # There are also lower-level methods. Unfortunately, swig and rdoc don't work
 # very well together, so the best references for these calls are currently the
-# source of {Relax4.solve} and the <tt>ext/relax4.h</tt> header file listed
+# source of {Relax4.solve} and the <tt>relax4.h</tt> header file listed
 # below:
-#  :include:../ext/relax4.h
+#  :include:../ext/relax4/relax4.h
 #
 module Relax4
   #
@@ -41,10 +41,10 @@ module Relax4
   # an initial feasible solution; this is recommended only for hard problems.
   #
   # @option args [Integer] :large (RELAX4_DEFAULT_LARGE) a very large integer to
-  # represent infinity; see the ext/relax4.h listing above for more info.
+  # represent infinity; see the relax4.h listing above for more info.
   #
   # @option args [Integer] :max_cost (RELAX4_DEFAULT_MAX_COST) largest allowed
-  # cost, in order to avoid integer overflow; see the ext/relax4.h listing above
+  # cost, in order to avoid integer overflow; see the relax4.h listing above
   # for more info.
   #
   # @return [Array<Integer>] optimal flows for each arc
@@ -338,7 +338,7 @@ module Relax4
   # Set start_nodes, end_nodes and costs based on cost matrix; nil entries in
   # the cost matrix are not mapped to arcs.
   #
-  # @return Array<Array<Integer>> array of pairs of (zero-based) indices into
+  # @return [Array<Array<Integer>>] array of pairs of (zero-based) indices into
   # costs that correspond to the created arcs; size is <tt>m*n</tt> minus the
   # number of nil entries in the costs matrix
   #

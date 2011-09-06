@@ -1,36 +1,49 @@
-require 'mkmf' # for Config
-require 'rake/clean'
+require 'rubygems'
+require 'bundler/setup'
+require 'gemma'
 
-begin
-  require 'rubygems'
-  require 'gemma'
+require 'rbconfig'
 
-  Gemma::RakeTasks.with_gemspec_file 'relax4.gemspec' do |g|
-    # Use old rdoc, because rdoc 2.5.11 seems to mangle the included relax4.h
-    # header file. Unfortunately, the old rdoc ignores --exclude when given an
-    # explicit file list (2.5.11 doesn't), so we have to fix that up here.
-    g.rdoc.use_gem_if_available = false
-    g.rdoc.files.delete_if {|f| File.dirname(f) == 'ext'}
-  end
-rescue LoadError
-  puts "Install gemma (sudo gem install gemma) for more rake tasks."
-end
+Gemma::RakeTasks.with_gemspec_file 'relax4.gemspec'
 
-# Run swig.
-file 'ext/relax4_wrap.c' => %w(ext/relax4.h ext/relax4.c ext/relax4.i) do |t|
-  Dir.chdir('ext') do
+NAME = 'relax4'
+EXT_PATH = File.join('ext', NAME)
+LIB_PATH = File.join('lib', NAME)
+WRAPPER_C = File.join(EXT_PATH, "#{NAME}_wrap.c")
+SO_NAME = "#{NAME}.#{RbConfig::CONFIG['DLEXT']}"
+
+# rule to run swig to generate relax4_wrap.c
+file WRAPPER_C => Dir.glob(File.join(EXT_PATH, "*.{h,i}")) do |t|
+  Dir.chdir(EXT_PATH) do
     sh "swig -ruby relax4.i"
   end
 end
 
-# Run extconf to build.
-EXT = "ext/relax4.#{Config::CONFIG['DLEXT']}"
-file EXT => %w(ext/extconf.rb ext/relax4_wrap.c) do |t|
-  Dir.chdir('ext') do
+# rule to build the extension: this says
+# that the extension should be rebuilt
+# after any change to the files in ext
+file File.join(LIB_PATH, SO_NAME) =>
+  Dir.glob(File.join(EXT_PATH, "*.{rb,c,h}")) + [WRAPPER_C] do
+  Dir.chdir(EXT_PATH) do
+    # this does essentially the same thing
+    # as what rubygems does
     ruby "extconf.rb"
     sh "make"
   end
+  cp File.join(EXT_PATH, SO_NAME), LIB_PATH
 end
+
+# make the :test task depend on the shared
+# object, so it will be built automatically
+# before running the tests
+task :test => File.join(LIB_PATH, SO_NAME)
+
+# use 'rake clean' and 'rake clobber' to
+# easily delete generated files
+CLEAN.include('ext/**/*{.o,.log,.so}')
+CLEAN.include('ext/**/Makefile')
+CLOBBER.include('lib/**/*.so')
+CLOBBER.include(WRAPPER_C)
 
 desc "docs to rubyforge"
 task :publish_docs => :rdoc do
@@ -38,9 +51,5 @@ task :publish_docs => :rdoc do
      " jdleesmiller@rubyforge.org:/var/www/gforge-projects/relax4"
 end
 
-CLEAN.include('ext/*.o', 'ext/mkmf.log', 'ext/Makefile')
-CLOBBER.include('ext/*.so')
-
-task :test => EXT
 task :default => :test
 

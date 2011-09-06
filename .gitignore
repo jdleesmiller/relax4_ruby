@@ -1,7 +1,7 @@
 .*.swp
-/ext/*.o
-/ext/*.so
+*.o
+*.so
 /coverage
 /rdoc
-/ext/Makefile
-/ext/mkmf.log
+/ext/relax4/Makefile
+/ext/relax4/mkmf.log
