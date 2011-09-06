@@ -3,8 +3,8 @@ PATH
   specs:
     relax4 (1.2.0)
 
-PATH
-  remote: ../gemma
+GEM
+  remote: http://rubygems.org/
   specs:
     gemma (2.0.0)
       bundler (~> 1.0.18)
@@ -13,10 +13,6 @@ PATH
       rake (~> 0.9.2)
       rdoc (~> 3.9.4)
       yard (~> 0.7.2)
-
-GEM
-  remote: http://rubygems.org/
-  specs:
     highline (1.6.2)
     minitest (2.5.1)
     rake (0.9.2)
@@ -27,5 +23,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  gemma!
+  gemma (~> 2.0.0)
   relax4!
