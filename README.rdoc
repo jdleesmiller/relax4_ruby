@@ -115,7 +115,7 @@ The bindings were generated with f2c (FORTRAN to C converter) and SWIG
 
 == DEVELOPMENT
 
-Obtain the source from github (http://github.com/jdleesmiller/relax4_ruby) and
+Get the source from github (http://github.com/jdleesmiller/relax4_ruby) and
 use bundler to get the development dependencies:
 
   gem install bundler
