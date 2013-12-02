@@ -8,4 +8,4 @@ require 'mkmf'
 #  src += "\nint MAIN__(void){ }\n"
 #} or raise 'You must install f2c (FORTRAN to C converter).'
 
-create_makefile("relax4")
+create_makefile("relax4/relax4")

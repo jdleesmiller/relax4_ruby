@@ -17,7 +17,7 @@ Ruby interface for the RELAX IV code by D.P. Bertsekas and P. Tseng.
 DESC
   s.rubyforge_project = "relax4"
 
-  s.add_development_dependency 'gemma', '~> 2.0.0'
+  s.add_development_dependency 'gemma', '~> 3.0.0'
   
   s.files = Dir.glob("lib/**/*.rb") +
     Dir.glob("ext/relax4/*.{rb,c,h}") +

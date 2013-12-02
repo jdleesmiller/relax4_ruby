@@ -5,3 +5,6 @@
 /rdoc
 /ext/relax4/Makefile
 /ext/relax4/mkmf.log
+Gemfile.lock
+.ruby-version
+.ruby-gemset
