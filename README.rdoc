@@ -129,6 +129,10 @@ use bundler to get the development dependencies:
 
 == HISTORY
 
+<em>1.2.1</em> 20131202
+* fixed error with gem installation (wrong path; issue #1)
+* now using gemma 3
+
 <em>1.2.0</em> 20110905
 * reorganized gem to be consistent with http://guides.rubygems.org/c-extensions
 * now using gemma 2 for development tasks
@@ -185,7 +189,7 @@ The main author of the RELAX IV code is:
 
 The code for these Ruby bindings is released under the MIT license.
 
-Copyright (c) 2010 John Lees-Miller
+Copyright (c) 2013 John Lees-Miller
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
