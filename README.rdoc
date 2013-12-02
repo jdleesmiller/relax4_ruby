@@ -4,6 +4,8 @@ http://relax4.rubyforge.org
 
 http://github.com/jdleesmiller/relax4_ruby
 
+{<img src="https://secure.travis-ci.org/jdleesmiller/relax4_ruby.png"/>}[http://travis-ci.org/jdleesmiller/relax4_ruby]
+
 == DESCRIPTION
 
 Ruby interface for the RELAX IV code for minimum cost network flow problems,
